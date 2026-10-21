@@ -1,3 +1,4 @@
+
 package org.umn.yumi
 
 import android.os.Bundle
@@ -24,9 +25,11 @@ import org.umn.yumi.ui.screens.OpeningScreen
 import org.umn.yumi.ui.theme.YumiTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             YumiTheme {
                 AppNavigation()
