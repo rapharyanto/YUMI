@@ -5,13 +5,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import org.umn.yumi.ui.theme.DetailRestoScreen
-import org.umn.yumi.ui.theme.ExploreScreen
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import org.umn.yumi.ui.screens.LoginScreen
+import org.umn.yumi.ui.screens.OpeningScreen
+import org.umn.yumi.ui.theme.YumiTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -20,95 +31,74 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MaterialTheme {
-                var currentPage by remember {
-                    mutableStateOf("explore")
-                }
-
-                var selectedResto by remember {
-                    mutableStateOf("Bakso Solo Samrat")
-                }
-
-                when (currentPage) {
-                    "restaurant_detail" -> {
-                        DetailRestoScreen(
-                            restoName = selectedResto,
-                            onBack = {
-                                currentPage = "explore"
-                            },
-                            onNavigate = { destination ->
-                                when (destination) {
-                                    "map" -> {
-                                        currentPage = "map"
-                                    }
-
-                                    "share", "bookmark", "contact" -> {
-                                        // Aksi belum diimplementasikan.
-                                    }
-                                }
-                            }
-                        )
-                    }
-
-                    "map" -> {
-                        // Halaman peta masih sementara.
-                        ExploreScreen(
-                            onNavigate = { destination ->
-                                when (destination) {
-                                    "restaurant_detail" -> {
-                                        currentPage = "restaurant_detail"
-                                    }
-
-                                    "Bakso Solo Samrat",
-                                    "Kopi Kenangan",
-                                    "Kopi Nako" -> {
-                                        selectedResto = destination
-                                        currentPage = "restaurant_detail"
-                                    }
-
-                                    "explore",
-                                    "home" -> {
-                                        currentPage = "explore"
-                                    }
-                                }
-                            }
-                        )
-                    }
-
-                    else -> {
-                        ExploreScreen(
-                            onNavigate = { destination ->
-                                when (destination) {
-                                    "restaurant_detail" -> {
-                                        currentPage = "restaurant_detail"
-                                    }
-
-                                    "Bakso Solo Samrat",
-                                    "Kopi Kenangan",
-                                    "Kopi Nako" -> {
-                                        selectedResto = destination
-                                        currentPage = "restaurant_detail"
-                                    }
-
-                                    "map" -> {
-                                        currentPage = "map"
-                                    }
-
-                                    "explore",
-                                    "home" -> {
-                                        currentPage = "explore"
-                                    }
-
-                                    "profile",
-                                    "voice" -> {
-                                        // Halaman/fitur belum tersedia.
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }
+            YumiTheme {
+                AppNavigation()
             }
         }
+    }
+}
+
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "opening"
+    ) {
+        // 1. Halaman Opening
+        composable("opening") {
+            OpeningScreen(
+                onMulaiEksplorClick = {
+                    navController.navigate("login")
+                }
+            )
+        }
+
+        // 2. Halaman Login
+        composable("login") {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("opening") { inclusive = true }
+                    }
+                },
+                onRegisterClick = {
+                    // Nanti dihubungkan ke Register.kt
+                },
+                onForgotPasswordClick = {
+                    // Nanti dihubungkan ke ForgotPassword.kt
+                },
+                onGuestClick = {
+                    navController.navigate("home")
+                }
+            )
+        }
+
+        // 3. Halaman Home (Placeholder sementara sampai Home.kt selesai dibuat)
+        composable("home") {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFFDF8FF)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "🎉 Login Berhasil!\n\n(Tampilan Home.kt sedang dikembangkan)",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1C1A28),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AppNavigationPreview() {
+    YumiTheme {
+        AppNavigation()
     }
 }
