@@ -53,3 +53,12 @@ val OranyeKuat = Color(0xFFE84B2C)
 // Aksen merah dan oranye untuk kode lama
 val AccentOrange = MerahUtama
 val AccentRed = OranyeKuat
+
+// YUMI Brand Colors
+
+// Supporting Colors
+val YumiDarkRed = Color(0xFF7D1515)
+val YumiWhite = Color(0xFFFFFFFF)
+val YumiText = Color(0xFF3D2923)
+val YumiMutedText = Color(0xFF806F63)
+val YumiBorder = Color(0xFFECE3CF)
