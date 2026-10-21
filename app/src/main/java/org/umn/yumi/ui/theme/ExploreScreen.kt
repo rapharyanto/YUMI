@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -48,14 +46,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.umn.yumi.R
+import org.umn.yumi.ui.components.BottomNavigationBar
 
-private val ExploreRed = Color(0xFFA83219)
-private val ExploreLavender = Color(0xFFF2EAFB)
-private val ExploreBackground = Color(0xFFFCF9FD)
-private val ExploreText = Color(0xFF25232A)
-private val ExploreMuted = Color(0xFF817A86)
-private val ExploreGreen = Color(0xFFDDF3E7)
-private val ExploreBorder = Color(0xFFE8DDF2)
+private val ExploreRed = YumiRed
+private val ExploreDarkRed = YumiDarkRed
+private val ExploreBackground = YumiCream
+private val ExploreSurface = YumiWhite
+private val ExploreText = YumiText
+private val ExploreMuted = YumiMutedText
+private val ExploreBorder = YumiBorder
+
+private val ExploreSoftRed = Color(0xFFF7E5DF)
+private val ExploreSoftGreen = Color(0xFFE4F0E4)
+private val ExploreGreenText = Color(0xFF47734D)
+private val ExploreSoftGold = Color(0xFFFFEBCB)
+private val ExploreGoldText = Color(0xFF8B5B17)
 
 private data class ExploreReview(
     val name: String,
@@ -126,20 +131,33 @@ fun ExploreScreen(
         query.isBlank() ||
                 it.name.contains(query, ignoreCase = true) ||
                 it.place.contains(query, ignoreCase = true) ||
-                it.description.contains(query, ignoreCase = true)
+                it.description.contains(query, ignoreCase = true) ||
+                it.restoName.contains(query, ignoreCase = true)
     }
 
     Scaffold(
         containerColor = ExploreBackground,
         bottomBar = {
-            ExploreNavigation(onNavigate)
+            BottomNavigationBar(
+                selectedMenu = "jelajah",
+                onMenuSelected = { menu ->
+                    when (menu) {
+                        "beranda" -> onNavigate("home")
+                        "jelajah" -> onNavigate("explore")
+                        "peta" -> onNavigate("map")
+                        "profil" -> onNavigate("profile")
+                        "voice_ai" -> onNavigate("voice")
+                    }
+                }
+            )
         }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .background(ExploreBackground)
                 .padding(innerPadding),
-            contentPadding = PaddingValues(bottom = 18.dp)
+            contentPadding = PaddingValues(bottom = 20.dp)
         ) {
             item {
                 ExploreTopBar(onNavigate)
@@ -150,39 +168,54 @@ fun ExploreScreen(
                     modifier = Modifier.padding(
                         start = 20.dp,
                         end = 20.dp,
-                        top = 3.dp,
-                        bottom = 12.dp
+                        top = 15.dp,
+                        bottom = 14.dp
                     )
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "⚙",
-                            color = ExploreRed,
-                            fontSize = 16.sp
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(25.dp)
+                                .background(
+                                    ExploreSoftRed,
+                                    CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "✦",
+                                color = ExploreRed,
+                                fontSize = 14.sp
+                            )
+                        }
 
-                        Spacer(Modifier.width(6.dp))
+                        Spacer(Modifier.width(8.dp))
 
                         Text(
                             text = "SUARA KOMUNITAS",
                             color = ExploreRed,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium
+                            fontSize = 10.sp,
+                            letterSpacing = 1.sp,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Spacer(Modifier.weight(1f))
 
                         Surface(
-                            color = Color(0xFFF0EBF4),
-                            shape = RoundedCornerShape(12.dp)
+                            color = ExploreSurface,
+                            shape = RoundedCornerShape(20.dp),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                ExploreBorder
+                            )
                         ) {
                             Row(
                                 modifier = Modifier.padding(
-                                    horizontal = 7.dp,
-                                    vertical = 4.dp
+                                    horizontal = 9.dp,
+                                    vertical = 6.dp
                                 ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -190,12 +223,12 @@ fun ExploreScreen(
                                     Modifier
                                         .size(6.dp)
                                         .background(
-                                            Color(0xFF83BFA0),
+                                            ExploreGreenText,
                                             CircleShape
                                         )
                                 )
 
-                                Spacer(Modifier.width(4.dp))
+                                Spacer(Modifier.width(5.dp))
 
                                 Text(
                                     text = "2.4K Foto Hari Ini",
@@ -206,26 +239,26 @@ fun ExploreScreen(
                         }
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(12.dp))
 
                     Text(
-                        text = "Review Jujur Foodies 📸",
+                        text = "Review Jujur Foodies",
                         color = ExploreText,
                         fontSize = 25.sp,
-                        lineHeight = 30.sp,
+                        lineHeight = 31.sp,
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(5.dp))
 
                     Text(
-                        text = "Eksplorasi kuliner nyata dari food hunters terpercaya di sekitarmu.",
+                        text = "Temukan cerita dan rekomendasi kuliner dari food hunters.",
                         color = ExploreMuted,
-                        fontSize = 13.sp,
-                        lineHeight = 19.sp
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp
                     )
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(16.dp))
 
                     ExploreSearch(
                         query = query,
@@ -239,10 +272,10 @@ fun ExploreScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState())
-                        .padding(bottom = 15.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        .padding(bottom = 14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(12.dp))
 
                     listOf(
                         "Terbaru",
@@ -257,18 +290,39 @@ fun ExploreScreen(
                         )
                     }
 
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(12.dp))
                 }
             }
 
             if (visibleReviews.isEmpty()) {
                 item {
-                    Text(
-                        text = "Belum ada review yang cocok.",
-                        color = ExploreMuted,
-                        modifier = Modifier.padding(24.dp),
-                        fontSize = 13.sp
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "⌕",
+                            color = ExploreRed,
+                            fontSize = 34.sp
+                        )
+
+                        Spacer(Modifier.height(8.dp))
+
+                        Text(
+                            text = "Belum ada review yang cocok",
+                            color = ExploreText,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Text(
+                            text = "Coba kata kunci lainnya, bro.",
+                            color = ExploreMuted,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             } else {
                 items(visibleReviews) { review ->
@@ -276,10 +330,9 @@ fun ExploreScreen(
                         review = review,
                         modifier = Modifier.padding(
                             horizontal = 16.dp,
-                            vertical = 5.dp
+                            vertical = 7.dp
                         ),
                         onClick = {
-                            // Kirim nama restoran yang dipilih ke MainActivity.
                             onNavigate(review.restoName)
                         }
                     )
@@ -296,51 +349,76 @@ private fun ExploreTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ExploreBackground)
-            .padding(horizontal = 16.dp, vertical = 11.dp),
+            .background(ExploreRed)
+            .padding(
+                horizontal = 18.dp,
+                vertical = 13.dp
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
-            color = ExploreRed,
-            shape = RoundedCornerShape(6.dp)
+            color = ExploreCreamLogo,
+            shape = RoundedCornerShape(9.dp)
         ) {
             Text(
                 text = "Y",
-                color = Color.White,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
+                color = ExploreRed,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(
-                    horizontal = 7.dp,
-                    vertical = 5.dp
+                    horizontal = 11.dp,
+                    vertical = 7.dp
                 )
             )
         }
 
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(10.dp))
 
         Surface(
-            color = ExploreLavender,
+            color = ExploreCreamLogo,
             shape = RoundedCornerShape(22.dp),
             modifier = Modifier.clickable {
                 onNavigate("location")
             }
         ) {
-            Text(
-                text = "📍 Jakarta Selatan  ⌄",
-                color = ExploreText,
-                fontSize = 11.sp,
+            Row(
                 modifier = Modifier.padding(
-                    horizontal = 10.dp,
+                    horizontal = 11.dp,
                     vertical = 9.dp
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "⌖",
+                    color = ExploreRed,
+                    fontSize = 15.sp
                 )
-            )
+
+                Spacer(Modifier.width(5.dp))
+
+                Text(
+                    text = "Jakarta Selatan",
+                    color = ExploreDarkRed,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(Modifier.width(5.dp))
+
+                Text(
+                    text = "⌄",
+                    color = ExploreDarkRed,
+                    fontSize = 12.sp
+                )
+            }
         }
 
         Spacer(Modifier.weight(1f))
 
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(36.dp)
+                .clip(CircleShape)
                 .clickable {
                     onNavigate("notifications")
                 },
@@ -348,16 +426,19 @@ private fun ExploreTopBar(
         ) {
             Text(
                 text = "♧",
-                color = ExploreText,
+                color = ExploreCreamLogo,
                 fontSize = 23.sp
             )
 
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 3.dp, end = 3.dp)
+                    .padding(top = 4.dp, end = 4.dp)
                     .size(7.dp)
-                    .background(ExploreRed, CircleShape)
+                    .background(
+                        Color(0xFFFFD56A),
+                        CircleShape
+                    )
             )
         }
 
@@ -368,7 +449,12 @@ private fun ExploreTopBar(
             contentDescription = "Profil pengguna",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(31.dp)
+                .size(34.dp)
+                .border(
+                    2.dp,
+                    ExploreCreamLogo,
+                    CircleShape
+                )
                 .clip(CircleShape)
                 .clickable {
                     onNavigate("profile")
@@ -376,6 +462,8 @@ private fun ExploreTopBar(
         )
     }
 }
+
+private val ExploreCreamLogo = Color(0xFFFFFBEB)
 
 @Composable
 private fun ExploreSearch(
@@ -385,21 +473,26 @@ private fun ExploreSearch(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(43.dp),
-        color = ExploreLavender,
-        shape = RoundedCornerShape(15.dp)
+            .height(48.dp)
+            .border(
+                1.dp,
+                ExploreBorder,
+                RoundedCornerShape(24.dp)
+            ),
+        color = ExploreSurface,
+        shape = RoundedCornerShape(24.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier.padding(horizontal = 15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "⌕",
                 color = ExploreText,
-                fontSize = 24.sp
+                fontSize = 25.sp
             )
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(9.dp))
 
             Box(
                 modifier = Modifier.weight(1f),
@@ -407,7 +500,7 @@ private fun ExploreSearch(
             ) {
                 if (query.isEmpty()) {
                     Text(
-                        text = "Cari bakso, matcha latte, atau resto favorit",
+                        text = "Cari makanan, kopi susu, ramen...",
                         fontSize = 12.sp,
                         color = ExploreMuted,
                         maxLines = 1,
@@ -429,11 +522,22 @@ private fun ExploreSearch(
 
             Spacer(Modifier.width(8.dp))
 
-            Text(
-                text = "♩",
-                color = ExploreRed,
-                fontSize = 19.sp
-            )
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .background(
+                        ExploreSoftRed,
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "≡",
+                    color = ExploreRed,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
@@ -452,30 +556,39 @@ private fun ExploreFilterChip(
     }
 
     Surface(
-        modifier = Modifier.clickable(onClick = onClick),
-        color = if (selected) ExploreRed else ExploreLavender,
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .then(
+                if (selected) Modifier
+                else Modifier.border(
+                    1.dp,
+                    ExploreBorder,
+                    RoundedCornerShape(22.dp)
+                )
+            ),
+        color = if (selected) ExploreRed else ExploreSurface,
         shape = RoundedCornerShape(22.dp)
     ) {
         Row(
             modifier = Modifier.padding(
-                horizontal = 12.dp,
-                vertical = 9.dp
+                horizontal = 13.dp,
+                vertical = 10.dp
             ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = icon,
-                color = if (selected) Color.White else ExploreRed,
+                color = if (selected) ExploreSurface else ExploreRed,
                 fontSize = 12.sp
             )
 
-            Spacer(Modifier.width(5.dp))
+            Spacer(Modifier.width(6.dp))
 
             Text(
                 text = label,
-                color = if (selected) Color.White else ExploreText,
+                color = if (selected) ExploreSurface else ExploreText,
                 fontSize = 11.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -491,12 +604,12 @@ private fun ExploreReviewCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(17.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = ExploreSurface
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
+            defaultElevation = 1.dp
         )
     ) {
         Column {
@@ -504,10 +617,10 @@ private fun ExploreReviewCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = 12.dp,
-                        end = 12.dp,
-                        top = 12.dp,
-                        bottom = 8.dp
+                        start = 13.dp,
+                        end = 13.dp,
+                        top = 13.dp,
+                        bottom = 10.dp
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -516,157 +629,158 @@ private fun ExploreReviewCard(
                     contentDescription = review.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(42.dp)
                         .clip(CircleShape)
                 )
 
-                Spacer(Modifier.width(9.dp))
+                Spacer(Modifier.width(10.dp))
 
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = review.name,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = ExploreText
-                        )
+                    Text(
+                        text = review.name,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ExploreText,
+                        maxLines = 1
+                    )
 
-                        Spacer(Modifier.width(6.dp))
-
-                        Surface(
-                            color = Color(0xFFFFE4D8),
-                            shape = RoundedCornerShape(7.dp)
-                        ) {
-                            Text(
-                                text = review.badge,
-                                color = ExploreRed,
-                                fontSize = 8.sp,
-                                modifier = Modifier.padding(
-                                    horizontal = 5.dp,
-                                    vertical = 3.dp
-                                ),
-                                maxLines = 1
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.height(3.dp))
+                    Spacer(Modifier.height(4.dp))
 
                     Text(
-                        text = "♧ 2 jam lalu • ${review.level}",
-                        fontSize = 9.sp,
+                        text = "${review.level} · 2 jam lalu",
+                        fontSize = 10.sp,
                         color = ExploreMuted,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+
+                    Spacer(Modifier.height(5.dp))
+
+                    Surface(
+                        color = ExploreSoftRed,
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            text = review.badge,
+                            color = ExploreDarkRed,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(
+                                horizontal = 7.dp,
+                                vertical = 4.dp
+                            ),
+                            maxLines = 1
+                        )
+                    }
                 }
 
                 Text(
                     text = "•••",
                     color = ExploreMuted,
-                    fontSize = 15.sp
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
 
-            Surface(
-                color = Color.White,
-                shape = RoundedCornerShape(12.dp),
+            Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(
-                        start = 12.dp,
-                        end = 12.dp,
-                        bottom = 8.dp
+                        horizontal = 13.dp
                     )
                     .border(
-                        width = 1.dp,
-                        color = ExploreBorder,
-                        shape = RoundedCornerShape(12.dp)
+                        1.dp,
+                        ExploreBorder,
+                        RoundedCornerShape(12.dp)
                     )
-            ) {
-                Row(
-                    modifier = Modifier.padding(
-                        horizontal = 9.dp,
-                        vertical = 7.dp
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(ExploreSurface)
+                    .clickable(onClick = onClick)
+                    .padding(
+                        horizontal = 10.dp,
+                        vertical = 9.dp
                     ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "⌖",
-                        color = ExploreRed,
-                        fontSize = 15.sp
-                    )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "⌖",
+                    color = ExploreRed,
+                    fontSize = 16.sp
+                )
 
-                    Spacer(Modifier.width(5.dp))
+                Spacer(Modifier.width(7.dp))
 
-                    Text(
-                        text = review.place,
-                        color = ExploreText,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
-                    )
+                Text(
+                    text = review.place,
+                    color = ExploreText,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
 
-                    Spacer(Modifier.width(5.dp))
-
-                    Text(
-                        text = "›",
-                        color = ExploreMuted,
-                        fontSize = 19.sp
-                    )
-                }
+                Text(
+                    text = "›",
+                    color = ExploreMuted,
+                    fontSize = 20.sp
+                )
             }
 
-            Box {
+            Spacer(Modifier.height(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+                    .clip(RoundedCornerShape(15.dp))
+            ) {
                 Image(
                     painter = painterResource(review.image),
-                    contentDescription = "Foto makanan",
+                    contentDescription = "Foto makanan di ${review.restoName}",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(244.dp)
+                        .height(230.dp)
+                        .clickable(onClick = onClick)
                 )
 
                 Surface(
-                    color = ExploreGreen,
+                    color = ExploreSoftGreen,
                     shape = RoundedCornerShape(
-                        topStart = 10.dp,
-                        bottomStart = 10.dp
+                        topEnd = 12.dp,
+                        bottomStart = 12.dp
                     ),
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(top = 8.dp)
+                    modifier = Modifier.align(Alignment.TopEnd)
                 ) {
                     Text(
-                        text = "✓ Dine-in Terverifikasi",
-                        color = Color(0xFF39845D),
-                        fontSize = 9.sp,
+                        text = "✓ Terverifikasi",
+                        color = ExploreGreenText,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(
-                            horizontal = 8.dp,
-                            vertical = 5.dp
+                            horizontal = 9.dp,
+                            vertical = 6.dp
                         )
                     )
                 }
 
                 Surface(
-                    color = Color(0xCC29252A),
+                    color = Color(0xCC3D2923),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(9.dp)
                 ) {
                     Text(
-                        text = "▣ 1/4",
-                        color = Color.White,
+                        text = "▧ 1/4",
+                        color = ExploreSurface,
                         fontSize = 10.sp,
                         modifier = Modifier.padding(
-                            horizontal = 7.dp,
-                            vertical = 4.dp
+                            horizontal = 8.dp,
+                            vertical = 5.dp
                         )
                     )
                 }
@@ -677,39 +791,53 @@ private fun ExploreReviewCard(
                     .fillMaxWidth()
                     .horizontalScroll(rememberScrollState())
                     .padding(
-                        start = 12.dp,
-                        top = 9.dp,
+                        start = 13.dp,
+                        end = 13.dp,
+                        top = 11.dp,
                         bottom = 8.dp
                     ),
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 ExploreRating(
-                    label = "♨ Rasa: ${review.taste}",
-                    background = Color(0xFFFFE9E2),
-                    foreground = ExploreRed
+                    label = "✦ Rasa ${review.taste}",
+                    background = ExploreSoftRed,
+                    foreground = ExploreDarkRed
                 )
 
                 ExploreRating(
-                    label = "◉ Suasana: ${review.atmosphere}",
-                    background = Color(0xFFE5F4F1),
-                    foreground = Color(0xFF287F75)
+                    label = "◉ Suasana ${review.atmosphere}",
+                    background = ExploreSoftGreen,
+                    foreground = ExploreGreenText
                 )
 
                 ExploreRating(
                     label = "♧ ${review.price}",
-                    background = Color(0xFFFFEBCB),
-                    foreground = Color(0xFF8B5B17)
+                    background = ExploreSoftGold,
+                    foreground = ExploreGoldText
                 )
             }
 
             Text(
-                text = "“${review.description}”",
+                text = review.restoName,
                 color = ExploreText,
-                fontSize = 13.sp,
-                lineHeight = 22.sp,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(
-                    start = 13.dp,
-                    end = 13.dp,
+                    start = 14.dp,
+                    end = 14.dp,
+                    top = 2.dp
+                )
+            )
+
+            Text(
+                text = "“${review.description}”",
+                color = ExploreMuted,
+                fontSize = 12.sp,
+                lineHeight = 19.sp,
+                modifier = Modifier.padding(
+                    start = 14.dp,
+                    end = 14.dp,
+                    top = 5.dp,
                     bottom = 15.dp
                 )
             )
@@ -725,141 +853,17 @@ private fun ExploreRating(
 ) {
     Surface(
         color = background,
-        shape = RoundedCornerShape(6.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Text(
             text = label,
             color = foreground,
             fontSize = 10.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(
-                horizontal = 8.dp,
-                vertical = 5.dp
+                horizontal = 9.dp,
+                vertical = 6.dp
             )
-        )
-    }
-}
-
-@Composable
-private fun ExploreNavigation(
-    onNavigate: (String) -> Unit
-) {
-    Surface(
-        color = Color.White,
-        shadowElevation = 10.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .height(66.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ExploreNavItem(
-                modifier = Modifier.weight(1f),
-                icon = "♜",
-                label = "Beranda",
-                selected = false,
-                onClick = { onNavigate("home") }
-            )
-
-            ExploreNavItem(
-                modifier = Modifier.weight(1f),
-                icon = "◎",
-                label = "Jelajah",
-                selected = true,
-                onClick = { onNavigate("explore") }
-            )
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(49.dp)
-                        .offset(y = (-6).dp)
-                        .clip(CircleShape)
-                        .background(ExploreRed)
-                        .border(
-                            width = 3.dp,
-                            color = Color(0xFFFFE8DF),
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            onNavigate("voice")
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "♩",
-                        color = Color.White,
-                        fontSize = 25.sp
-                    )
-                }
-
-                Text(
-                    text = "Voice AI",
-                    color = ExploreMuted,
-                    fontSize = 9.sp,
-                    modifier = Modifier.offset(y = (-5).dp)
-                )
-            }
-
-            ExploreNavItem(
-                modifier = Modifier.weight(1f),
-                icon = "▤",
-                label = "Peta",
-                selected = false,
-                onClick = { onNavigate("map") }
-            )
-
-            ExploreNavItem(
-                modifier = Modifier.weight(1f),
-                icon = "♙",
-                label = "Profil",
-                selected = false,
-                onClick = { onNavigate("profile") }
-            )
-        }
-    }
-}
-
-@Composable
-private fun ExploreNavItem(
-    modifier: Modifier = Modifier,
-    icon: String,
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = icon,
-            color = if (selected) ExploreRed else ExploreMuted,
-            fontSize = 22.sp
-        )
-
-        Spacer(Modifier.height(3.dp))
-
-        Text(
-            text = label,
-            color = if (selected) ExploreRed else ExploreMuted,
-            fontSize = 10.sp,
-            fontWeight = if (selected) {
-                FontWeight.SemiBold
-            } else {
-                FontWeight.Normal
-            }
         )
     }
 }

@@ -1,4 +1,3 @@
-
 package org.umn.yumi.ui.theme
 
 import androidx.compose.foundation.Image
@@ -45,12 +44,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.umn.yumi.R
 
-private val RestoRed = Color(0xFFA83219)
-private val RestoBackground = Color(0xFFFCF9FD)
-private val RestoLavender = Color(0xFFF0EAF9)
-private val RestoText = Color(0xFF25232A)
-private val RestoMuted = Color(0xFF817A86)
-private val RestoBorder = Color(0xFFE8DDF2)
+private val RestoRed = Color(0xFFA51C1C)
+private val RestoDarkRed = Color(0xFF7D1515)
+private val RestoCream = Color(0xFFFFFBEB)
+private val RestoText = Color(0xFF3D2923)
+private val RestoMuted = Color(0xFF806F63)
+private val RestoBorder = Color(0xFFECE3CF)
+private val RestoGreen = Color(0xFFE2F1DF)
+private val RestoGreenText = Color(0xFF34734B)
+private val RestoWhite = Color(0xFFFFFFFF)
+private val RestoSoftRed = Color(0xFFF8E8E1)
 
 private data class RestoDetailData(
     val name: String,
@@ -76,7 +79,7 @@ private fun getRestoData(restoName: String): RestoDetailData {
             image = R.drawable.kopi_kenangan_food,
             location = "Jakarta Selatan",
             rating = "4.8",
-            priceRange = "15k – 45k/orang",
+            priceRange = "Rp15.000–45.000/orang",
             distance = "Dekat dari lokasimu",
             openingHours = "Setiap hari • 08.00–22.00",
             menuName = "Kopi Susu Gula Aren",
@@ -92,7 +95,7 @@ private fun getRestoData(restoName: String): RestoDetailData {
             image = R.drawable.kopi_nako_food,
             location = "Jakarta Selatan",
             rating = "4.7",
-            priceRange = "20k – 50k/orang",
+            priceRange = "Rp20.000–50.000/orang",
             distance = "Dekat dari lokasimu",
             openingHours = "Setiap hari • 09.00–22.00",
             menuName = "Es Kopi Nako",
@@ -108,8 +111,8 @@ private fun getRestoData(restoName: String): RestoDetailData {
             image = R.drawable.bakso_food,
             location = "Tebet Barat, Jakarta Selatan",
             rating = "4.9",
-            priceRange = "25k – 60k/orang",
-            distance = "450m dari lokasimu",
+            priceRange = "Rp25.000–60.000/orang",
+            distance = "450 m dari lokasimu",
             openingHours = "Setiap hari • 10.00–22.00",
             menuName = "Bakso Urat Granat Jumbo",
             menuDescription = "Bakso urat sapi dengan tekstur padat dan cita rasa gurih pedas.",
@@ -130,48 +133,64 @@ fun DetailRestoScreen(
     val resto = remember(restoName) { getRestoData(restoName) }
 
     Scaffold(
-        containerColor = RestoBackground,
+        containerColor = RestoCream,
         bottomBar = {
             Surface(
-                color = Color.White,
-                shadowElevation = 10.dp
+                color = RestoWhite,
+                shadowElevation = 8.dp
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                        .padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(
-                            text = "Estimasi Pengantaran",
-                            fontSize = 10.sp,
-                            color = RestoMuted
+                            text = "Kisaran harga",
+                            color = RestoMuted,
+                            fontSize = 10.sp
                         )
+
                         Spacer(Modifier.height(3.dp))
+
                         Text(
-                            text = "20–30 Menit",
+                            text = resto.priceRange.substringBefore("/"),
+                            color = RestoText,
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF358A65)
+                            fontWeight = FontWeight.Bold
                         )
                     }
 
                     Surface(
                         modifier = Modifier
-                            .weight(1.25f)
+                            .weight(1.2f)
                             .height(46.dp)
                             .clickable { onNavigate("map") },
                         color = RestoRed,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(14.dp)
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
-                                text = "⌖  Pesan / Buka Rute",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp
+                                text = "⌖",
+                                color = RestoWhite,
+                                fontSize = 19.sp
+                            )
+
+                            Spacer(Modifier.width(7.dp))
+
+                            Text(
+                                text = "Buka Rute",
+                                color = RestoWhite,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -183,146 +202,147 @@ fun DetailRestoScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(bottom = 16.dp)
+            contentPadding = PaddingValues(bottom = 20.dp)
         ) {
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp)
-                        .padding(horizontal = 16.dp),
+                        .background(RestoRed)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { onBack() },
+                        color = Color.White.copy(alpha = 0.14f),
+                        shape = CircleShape
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(
+                                text = "‹",
+                                color = RestoWhite,
+                                fontSize = 30.sp
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.width(11.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "YUMI",
+                            color = RestoWhite,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 1.5.sp
+                        )
+
+                        Text(
+                            text = "Detail restoran",
+                            color = RestoWhite.copy(alpha = 0.8f),
+                            fontSize = 11.sp
+                        )
+                    }
+
+                    RestoHeaderAction(
+                        icon = "↗",
+                        onClick = { onNavigate("share") }
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+
+                    RestoHeaderAction(
+                        icon = "♡",
+                        onClick = { onNavigate("bookmark") }
+                    )
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            RestoRed,
+                            RoundedCornerShape(
+                                bottomStart = 24.dp,
+                                bottomEnd = 24.dp
+                            )
+                        )
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 18.dp
+                        )
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .clickable { onBack() },
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .height(226.dp)
+                            .clip(RoundedCornerShape(18.dp))
                     ) {
-                        Text(
-                            text = "‹",
-                            color = RestoText,
-                            fontSize = 32.sp
+                        Image(
+                            painter = painterResource(resto.image),
+                            contentDescription = resto.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
                         )
-                    }
 
-                    Spacer(Modifier.width(8.dp))
+                        Surface(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(10.dp),
+                            color = RestoCream,
+                            shape = RoundedCornerShape(9.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(
+                                    horizontal = 9.dp,
+                                    vertical = 6.dp
+                                ),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    Modifier
+                                        .size(7.dp)
+                                        .background(
+                                            RestoGreenText,
+                                            CircleShape
+                                        )
+                                )
 
-                    Surface(
-                        color = Color(0xFFFFE7DE),
-                        shape = RoundedCornerShape(5.dp)
-                    ) {
-                        Text(
-                            text = "Y",
-                            color = RestoRed,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(
-                                horizontal = 6.dp,
-                                vertical = 4.dp
+                                Spacer(Modifier.width(5.dp))
+
+                                Text(
+                                    text = "Pilihan Foodies",
+                                    color = RestoText,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+
+                        Surface(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(10.dp),
+                            color = Color(0xCC3D2923),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "▧  Foto restoran",
+                                color = RestoWhite,
+                                fontSize = 10.sp,
+                                modifier = Modifier.padding(
+                                    horizontal = 9.dp,
+                                    vertical = 6.dp
+                                )
                             )
-                        )
-                    }
-
-                    Spacer(Modifier.width(9.dp))
-
-                    Text(
-                        text = "Detail Resto",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = RestoText,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Image(
-                        painter = painterResource(R.drawable.avatar_sarah),
-                        contentDescription = "Profil pengguna",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 20.dp,
-                            end = 20.dp,
-                            top = 4.dp,
-                            bottom = 12.dp
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("⌖", color = RestoRed, fontSize = 18.sp)
-                    Spacer(Modifier.width(5.dp))
-
-                    Text(
-                        text = resto.location,
-                        color = RestoText,
-                        fontSize = 11.sp,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    RestoCircleAction("•") { onNavigate("share") }
-                    Spacer(Modifier.width(8.dp))
-                    RestoCircleAction("▮") { onNavigate("bookmark") }
-                }
-            }
-
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .height(226.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                ) {
-                    Image(
-                        painter = painterResource(resto.image),
-                        contentDescription = resto.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-
-                    Surface(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(10.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0xF5FFFFFF)
-                    ) {
-                        Text(
-                            text = "●  Ramai Lancar",
-                            color = Color(0xFF176C52),
-                            fontSize = 9.sp,
-                            modifier = Modifier.padding(
-                                horizontal = 9.dp,
-                                vertical = 6.dp
-                            )
-                        )
-                    }
-
-                    Surface(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(10.dp),
-                        shape = RoundedCornerShape(7.dp),
-                        color = Color(0xCC29252A)
-                    ) {
-                        Text(
-                            text = "▣  Foto restoran",
-                            color = Color.White,
-                            fontSize = 9.sp,
-                            modifier = Modifier.padding(
-                                horizontal = 7.dp,
-                                vertical = 5.dp
-                            )
-                        )
+                        }
                     }
                 }
             }
@@ -330,69 +350,89 @@ fun DetailRestoScreen(
             item {
                 Column(
                     modifier = Modifier.padding(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 14.dp
+                        horizontal = 20.dp,
+                        vertical = 16.dp
                     )
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = resto.name,
-                            fontSize = 19.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = RestoText,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
+                    Row(
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(
                             modifier = Modifier.weight(1f)
-                        )
-
-                        Spacer(Modifier.width(7.dp))
-
-                        Surface(
-                            color = Color(0xFFFFE5C3),
-                            shape = RoundedCornerShape(15.dp)
                         ) {
                             Text(
-                                text = "★ ${resto.rating}",
-                                color = Color(0xFF765018),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(
-                                    horizontal = 9.dp,
-                                    vertical = 5.dp
-                                )
+                                text = resto.name,
+                                color = RestoText,
+                                fontSize = 22.sp,
+                                lineHeight = 27.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
+
+                            Spacer(Modifier.height(5.dp))
+
+                            Text(
+                                text = resto.category,
+                                color = RestoMuted,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        Spacer(Modifier.width(8.dp))
+
+                        Surface(
+                            color = Color(0xFFFFE8B7),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(
+                                    horizontal = 11.dp,
+                                    vertical = 8.dp
+                                ),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "★ ${resto.rating}",
+                                    color = Color(0xFF805416),
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Text(
+                                    text = "Rating",
+                                    color = Color(0xFF805416),
+                                    fontSize = 9.sp
+                                )
+                            }
                         }
                     }
 
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(14.dp))
 
-                    Text(
-                        text = resto.category,
-                        fontSize = 12.sp,
-                        color = RestoMuted
+                    RestoInfoLine(
+                        icon = "⌖",
+                        title = resto.location,
+                        subtitle = resto.distance
                     )
 
-                    Spacer(Modifier.height(7.dp))
+                    Spacer(Modifier.height(10.dp))
 
-                    Text(
-                        text = "Rp ${resto.priceRange}",
-                        color = RestoRed,
-                        fontSize = 11.sp
+                    RestoInfoLine(
+                        icon = "◷",
+                        title = resto.openingHours,
+                        subtitle = "Jam operasional"
                     )
 
-                    Spacer(Modifier.height(5.dp))
+                    Spacer(Modifier.height(10.dp))
 
-                    Text(
-                        text = "${resto.reviewCount} ulasan terpercaya  •  Lihat ulasan",
-                        color = RestoMuted,
-                        fontSize = 10.sp,
-                        modifier = Modifier.clickable {
-                            selectedTab = "Review & Foto"
-                        }
+                    RestoInfoLine(
+                        icon = "Rp",
+                        title = resto.priceRange,
+                        subtitle = "Estimasi biaya per orang"
                     )
 
-                    Spacer(Modifier.height(13.dp))
+                    Spacer(Modifier.height(14.dp))
 
                     Row(
                         modifier = Modifier
@@ -402,44 +442,53 @@ fun DetailRestoScreen(
                     ) {
                         RestoStatusChip(
                             text = "● Buka",
-                            background = Color(0xFF9DF0D1),
-                            foreground = Color(0xFF176C52)
+                            background = RestoGreen,
+                            foreground = RestoGreenText
                         )
+
                         RestoStatusChip(
-                            text = "♧ AC Ruangan",
-                            background = RestoLavender,
+                            text = "✓ Info restoran",
+                            background = RestoWhite,
                             foreground = RestoText
                         )
+
                         RestoStatusChip(
-                            text = "P Parkir",
-                            background = RestoLavender,
-                            foreground = RestoText
+                            text = "★ Favorit foodies",
+                            background = RestoSoftRed,
+                            foreground = RestoRed
                         )
                     }
 
-                    Spacer(Modifier.height(15.dp))
+                    Spacer(Modifier.height(17.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(9.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Surface(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(46.dp)
-                                .border(
-                                    1.dp,
-                                    RestoRed,
-                                    RoundedCornerShape(12.dp)
-                                )
-                                .clip(RoundedCornerShape(12.dp))
+                                .height(45.dp)
                                 .clickable { onNavigate("map") },
-                            color = RestoRed
+                            color = RestoRed,
+                            shape = RoundedCornerShape(13.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    text = "⌖  Arahkan Rute",
-                                    color = Color.White,
+                                    text = "⌖",
+                                    color = RestoWhite,
+                                    fontSize = 17.sp
+                                )
+
+                                Spacer(Modifier.width(6.dp))
+
+                                Text(
+                                    text = "Arahkan Rute",
+                                    color = RestoWhite,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -449,15 +498,31 @@ fun DetailRestoScreen(
                         Surface(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(46.dp)
-                                .clip(RoundedCornerShape(12.dp))
+                                .height(45.dp)
+                                .border(
+                                    1.dp,
+                                    RestoBorder,
+                                    RoundedCornerShape(13.dp)
+                                )
                                 .clickable { onNavigate("contact") },
-                            color = RestoLavender,
-                            shape = RoundedCornerShape(12.dp)
+                            color = RestoWhite,
+                            shape = RoundedCornerShape(13.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    text = "♧  Hubungi Resto",
+                                    text = "☎",
+                                    color = RestoRed,
+                                    fontSize = 15.sp
+                                )
+
+                                Spacer(Modifier.width(6.dp))
+
+                                Text(
+                                    text = "Hubungi Resto",
                                     color = RestoText,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold
@@ -465,6 +530,18 @@ fun DetailRestoScreen(
                             }
                         }
                     }
+
+                    Spacer(Modifier.height(9.dp))
+
+                    Text(
+                        text = "${resto.reviewCount} ulasan terpercaya  •  Lihat ulasan",
+                        color = RestoRed,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.clickable {
+                            selectedTab = "Review & Foto"
+                        }
+                    )
                 }
             }
 
@@ -473,16 +550,18 @@ fun DetailRestoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 17.dp,
-                            bottom = 17.dp
+                            horizontal = 16.dp,
+                            vertical = 5.dp
                         )
-                        .clip(RoundedCornerShape(13.dp))
-                        .background(RestoLavender)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(RestoWhite)
+                        .border(
+                            1.dp,
+                            RestoBorder,
+                            RoundedCornerShape(14.dp)
+                        )
                         .padding(5.dp),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     listOf(
                         "Menu Populer",
@@ -495,26 +574,26 @@ fun DetailRestoScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { selectedTab = tab },
-                            shape = RoundedCornerShape(10.dp),
-                            color = if (selected) Color.White else Color.Transparent
+                            color = if (selected) RestoRed else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp)
                         ) {
                             Box(
                                 modifier = Modifier.padding(
                                     horizontal = 3.dp,
-                                    vertical = 10.dp
+                                    vertical = 11.dp
                                 ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = tab,
-                                    color = if (selected) RestoRed else RestoText,
+                                    color = if (selected) RestoWhite else RestoMuted,
                                     fontSize = 10.sp,
                                     fontWeight = if (selected) {
-                                        FontWeight.SemiBold
+                                        FontWeight.Bold
                                     } else {
-                                        FontWeight.Normal
+                                        FontWeight.Medium
                                     },
-                                    maxLines = 2
+                                    maxLines = 1
                                 )
                             }
                         }
@@ -523,19 +602,40 @@ fun DetailRestoScreen(
             }
 
             item {
-                Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                Column(
+                    modifier = Modifier.padding(
+                        horizontal = 20.dp,
+                        vertical = 15.dp
+                    )
+                ) {
                     Text(
                         text = when (selectedTab) {
-                            "Review & Foto" -> "Review Terbaru"
+                            "Review & Foto" -> "Cerita dari Foodies"
                             "Info Lengkap" -> "Informasi Restoran"
-                            else -> "Paling Banyak Dipesan"
+                            else -> "Menu Favorit Foodies"
                         },
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = RestoText
                     )
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(5.dp))
+
+                    Text(
+                        text = when (selectedTab) {
+                            "Review & Foto" ->
+                                "Pengalaman pengunjung yang bisa jadi referensi."
+                            "Info Lengkap" ->
+                                "Detail penting sebelum kamu berkunjung."
+                            else ->
+                                "Rekomendasi menu yang layak kamu coba."
+                        },
+                        fontSize = 11.sp,
+                        lineHeight = 16.sp,
+                        color = RestoMuted
+                    )
+
+                    Spacer(Modifier.height(13.dp))
 
                     when (selectedTab) {
                         "Menu Populer" -> {
@@ -545,32 +645,71 @@ fun DetailRestoScreen(
                         "Review & Foto" -> {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(13.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = Color.White
+                                    containerColor = RestoWhite
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 1.dp
                                 )
                             ) {
-                                Column(modifier = Modifier.padding(14.dp)) {
-                                    Text(
-                                        text = "★ ${resto.rating}/5 • ${resto.reviewCount} ulasan",
-                                        color = RestoRed,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 13.sp
-                                    )
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Image(
+                                            painter = painterResource(
+                                                R.drawable.avatar_sarah
+                                            ),
+                                            contentDescription = "Sarah A.",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(38.dp)
+                                                .clip(CircleShape)
+                                        )
 
-                                    Spacer(Modifier.height(7.dp))
+                                        Spacer(Modifier.width(10.dp))
+
+                                        Column(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "Sarah A.",
+                                                color = RestoText,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+
+                                            Text(
+                                                text = "Pengunjung • Foodies",
+                                                color = RestoMuted,
+                                                fontSize = 10.sp
+                                            )
+                                        }
+
+                                        Text(
+                                            text = "★ ${resto.rating}",
+                                            color = Color(0xFF805416),
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+
+                                    Spacer(Modifier.height(12.dp))
 
                                     Text(
                                         text = "“${resto.review}”",
                                         color = RestoText,
-                                        fontSize = 12.sp,
-                                        lineHeight = 19.sp
+                                        fontSize = 13.sp,
+                                        lineHeight = 21.sp
                                     )
 
-                                    Spacer(Modifier.height(7.dp))
+                                    Spacer(Modifier.height(10.dp))
 
                                     Text(
-                                        text = "Sarah A. • Pengunjung",
+                                        text = "Membantu  •  ${resto.reviewCount} ulasan",
                                         color = RestoMuted,
                                         fontSize = 10.sp
                                     )
@@ -581,41 +720,45 @@ fun DetailRestoScreen(
                         else -> {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(13.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = Color.White
+                                    containerColor = RestoWhite
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 1.dp
                                 )
                             ) {
-                                Column(modifier = Modifier.padding(14.dp)) {
-                                    Text(
-                                        text = resto.name,
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = RestoText
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    RestoInfoLine(
+                                        icon = "⌖",
+                                        title = resto.name,
+                                        subtitle = resto.location
                                     )
 
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(Modifier.height(15.dp))
 
-                                    Text(
-                                        text = resto.location,
-                                        fontSize = 12.sp,
-                                        color = RestoMuted
+                                    RestoInfoLine(
+                                        icon = "◷",
+                                        title = "Jam operasional",
+                                        subtitle = resto.openingHours
                                     )
 
-                                    Spacer(Modifier.height(5.dp))
+                                    Spacer(Modifier.height(15.dp))
 
-                                    Text(
-                                        text = resto.openingHours,
-                                        fontSize = 12.sp,
-                                        color = RestoMuted
+                                    RestoInfoLine(
+                                        icon = "Rp",
+                                        title = "Kisaran harga",
+                                        subtitle = resto.priceRange
                                     )
 
-                                    Spacer(Modifier.height(5.dp))
+                                    Spacer(Modifier.height(15.dp))
 
-                                    Text(
-                                        text = resto.category,
-                                        fontSize = 12.sp,
-                                        color = RestoText
+                                    RestoInfoLine(
+                                        icon = "★",
+                                        title = "Rating ${resto.rating}/5",
+                                        subtitle = "${resto.reviewCount} ulasan"
                                     )
                                 }
                             }
@@ -628,22 +771,73 @@ fun DetailRestoScreen(
 }
 
 @Composable
-private fun RestoCircleAction(
+private fun RestoHeaderAction(
     icon: String,
     onClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier
-            .size(36.dp)
+            .size(34.dp)
             .clickable(onClick = onClick),
-        shape = CircleShape,
-        color = RestoLavender
+        color = Color.White.copy(alpha = 0.14f),
+        shape = CircleShape
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = icon,
-                color = RestoRed,
+                color = RestoWhite,
                 fontSize = 18.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun RestoInfoLine(
+    icon: String,
+    title: String,
+    subtitle: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Surface(
+            modifier = Modifier.size(36.dp),
+            color = RestoSoftRed,
+            shape = RoundedCornerShape(11.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = icon,
+                    color = RestoRed,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        Spacer(Modifier.width(10.dp))
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = title,
+                color = RestoText,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(Modifier.height(2.dp))
+
+            Text(
+                text = subtitle,
+                color = RestoMuted,
+                fontSize = 10.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -657,15 +851,16 @@ private fun RestoStatusChip(
 ) {
     Surface(
         color = background,
-        shape = RoundedCornerShape(18.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         Text(
             text = text,
             color = foreground,
             fontSize = 10.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(
                 horizontal = 10.dp,
-                vertical = 8.dp
+                vertical = 7.dp
             ),
             maxLines = 1
         )
@@ -673,21 +868,27 @@ private fun RestoStatusChip(
 }
 
 @Composable
-private fun RestoMenuCard(resto: RestoDetailData) {
+private fun RestoMenuCard(
+    resto: RestoDetailData
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(13.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = RestoWhite
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        )
     ) {
         Row(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(11.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(82.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(width = 104.dp, height = 112.dp)
+                    .clip(RoundedCornerShape(12.dp))
             ) {
                 Image(
                     painter = painterResource(resto.image),
@@ -699,50 +900,53 @@ private fun RestoMenuCard(resto: RestoDetailData) {
                 Surface(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(4.dp),
+                        .padding(6.dp),
                     color = RestoRed,
-                    shape = RoundedCornerShape(4.dp)
+                    shape = RoundedCornerShape(6.dp)
                 ) {
                     Text(
                         text = "Favorit",
-                        color = Color.White,
-                        fontSize = 8.sp,
+                        color = RestoWhite,
+                        fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(
-                            horizontal = 4.dp,
-                            vertical = 3.dp
+                            horizontal = 7.dp,
+                            vertical = 4.dp
                         )
                     )
                 }
             }
 
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(12.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = resto.menuName,
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
+                    lineHeight = 19.sp,
                     fontWeight = FontWeight.Bold,
                     color = RestoText
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = resto.menuDescription,
-                    fontSize = 10.sp,
-                    lineHeight = 15.sp,
-                    color = RestoMuted,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
                 )
 
                 Spacer(Modifier.height(5.dp))
 
                 Text(
+                    text = resto.menuDescription,
+                    fontSize = 11.sp,
+                    lineHeight = 16.sp,
+                    color = RestoMuted,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(Modifier.height(9.dp))
+
+                Text(
                     text = resto.menuPrice,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     color = RestoRed
                 )
             }

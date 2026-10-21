@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     "share", "bookmark", "contact" -> {
-                                        // Aksi dapat dihubungkan nanti.
+                                        // Aksi belum diimplementasikan.
                                     }
                                 }
                             }
@@ -51,12 +51,25 @@ class MainActivity : ComponentActivity() {
                     }
 
                     "map" -> {
-                        // Sementara kembali ke halaman Explore
-                        // karena halaman Map belum dihubungkan.
+                        // Halaman peta masih sementara.
                         ExploreScreen(
                             onNavigate = { destination ->
-                                if (destination == "restaurant_detail") {
-                                    currentPage = "restaurant_detail"
+                                when (destination) {
+                                    "restaurant_detail" -> {
+                                        currentPage = "restaurant_detail"
+                                    }
+
+                                    "Bakso Solo Samrat",
+                                    "Kopi Kenangan",
+                                    "Kopi Nako" -> {
+                                        selectedResto = destination
+                                        currentPage = "restaurant_detail"
+                                    }
+
+                                    "explore",
+                                    "home" -> {
+                                        currentPage = "explore"
+                                    }
                                 }
                             }
                         )
@@ -75,6 +88,20 @@ class MainActivity : ComponentActivity() {
                                     "Kopi Nako" -> {
                                         selectedResto = destination
                                         currentPage = "restaurant_detail"
+                                    }
+
+                                    "map" -> {
+                                        currentPage = "map"
+                                    }
+
+                                    "explore",
+                                    "home" -> {
+                                        currentPage = "explore"
+                                    }
+
+                                    "profile",
+                                    "voice" -> {
+                                        // Halaman/fitur belum tersedia.
                                     }
                                 }
                             }
