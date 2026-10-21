@@ -1,6 +1,6 @@
+package org.umn.yumi.ui.screens
 
-package org.umn.yumi.ui.theme
-
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.umn.yumi.R
 import org.umn.yumi.ui.components.BottomNavigationBar
+import org.umn.yumi.ui.theme.YumiCream
+import org.umn.yumi.ui.theme.YumiRed
 
 private val ExploreRed = YumiRed
 private val ExploreDarkRed = YumiDarkRed
@@ -207,7 +209,7 @@ fun ExploreScreen(
                         Surface(
                             color = ExploreSurface,
                             shape = RoundedCornerShape(20.dp),
-                            border = androidx.compose.foundation.BorderStroke(
+                            border = BorderStroke(
                                 1.dp,
                                 ExploreBorder
                             )
@@ -560,7 +562,7 @@ private fun ExploreFilterChip(
             .clickable(onClick = onClick)
             .then(
                 if (selected) Modifier
-                else Modifier.border(
+                else border(
                     1.dp,
                     ExploreBorder,
                     RoundedCornerShape(22.dp)

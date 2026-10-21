@@ -23,3 +23,33 @@ val PrimaryAccent = Color(0xFFAE3115) // Merah Oranye Aksen
 val TertiaryFixed = Color(0xFFFFDDB8) // Badge Oranye Muda
 val SecondaryFixed = Color(0xFF6FFBBE) // Badge Hijau Mint
 val SecondaryGreen = Color(0xFF006C49) // Verified Icon Green
+
+val LatarHalaman = Color(0xFFFFFBEA)
+
+// =====================================================
+// WARNA NETRAL
+// =====================================================
+
+val CardWhite = Color(0xFFFFFEF7)
+val TextDark = Color(0xFF302A26)
+val TextGray = Color(0xFF81776D)
+
+// =====================================================
+// WARNA PENDUKUNG KOMPONEN
+// Untuk tag makanan dan informasi
+// =====================================================
+
+val SoftGreen = Color(0xFFDDF0D8)
+val SoftBlue = Color(0xFFE4EAF5)
+val SoftYellow = Color(0xFFFFE7B3)
+val SoftPink = Color(0xFFF7DCD5)
+val SoftPeach = Color(0xFFFFE9D9)
+
+val MerahUtama = Color(0xFFA32622)
+
+// Merah-oranye: Voice AI, tombol utama, aksen
+val OranyeKuat = Color(0xFFE84B2C)
+
+// Aksen merah dan oranye untuk kode lama
+val AccentOrange = MerahUtama
+val AccentRed = OranyeKuat
