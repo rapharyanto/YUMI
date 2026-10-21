@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "608516289912",
+    "project_id": "yumi-130426128606125861126867",
+    "storage_bucket": "yumi-130426128606125861126867.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608516289912:android:06524705cd715f26dec48d",
+        "android_client_info": {
+          "package_name": "org.umn.yumi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608516289912-t07oo553gacb8tnhr9fesee2b3qvmpol.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.umn.yumi",
+            "certificate_hash": "341e1cb62b89cd2280a04c60a3b0b864d91b7c3d"
+          }
+        },
+        {
+          "client_id": "608516289912-1sbkk67l0hh00i1mosuvcn5sp5elo733.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC32kGBvZUKhKZ9dwgRPWetF74sOzcmcko"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608516289912-1sbkk67l0hh00i1mosuvcn5sp5elo733.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
