@@ -1,4 +1,4 @@
-package org.umn.yumi.ui.screens
+package org.umn.yumi.ui.screens.homepage
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -219,37 +219,6 @@ fun HomeForYou(
                     }
                 }
             }
-
-            // search bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(100.dp))
-                    .border(border = BorderStroke(1.dp, YumiShadowGrey), shape = RoundedCornerShape(100.dp))
-                    .background(YumiCardCream)
-                    .shadow(elevation = 1.dp, shape = RoundedCornerShape(100.dp))
-                    .padding(horizontal = 16.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "Search Icon",
-                        colorFilter = ColorFilter.tint(YumiTextDark),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = "Cari sate, kopi susu, ramen...",
-                        color = YumiNeutralGrey,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
         }
 
         LazyColumn(
@@ -455,34 +424,43 @@ fun HomeForYou(
                 }
             }
 
+            // Menambahkan Bakso Solo Samrat di urutan pertama, diikuti Sate Taichan, Bu Yudhi, Secret Sushi, dan Obihiro Nikudon
             val forYouList = listOf(
+                Triple(R.drawable.bakso_food, "Bakso Solo Samrat", "Bakso, Aneka Es & Masakan Jawa"),
                 Triple(R.drawable.sate_taichan_bang_yoyo, "Sate Taichan Bang Yoyo", "Sate & Grill, Street Food"),
                 Triple(R.drawable.bu_yudhi, "Kedai Sambal Cobek Bu Yudhi", "Ayam & Bebek, Aneka Sambal"),
                 Triple(R.drawable.secreet_sushi, "Secret Sushi by Okinawa Sushi", "Restoran Jepang, All You Can Eat"),
                 Triple(R.drawable.obihiro_nikudon, "Obihiro Nikudon", "Restoran Jepang")
             )
 
-            val forYouTagsList = listOf(
-                listOf("Halal", "Pedas", "Sate Ayam", "Ramai", "Nongkrong"),
-                listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai"),
-                listOf("Halal", "Jepang", "Sushi", "Sashimi", "Casual Dinner"),
-                listOf("Halal", "Nikudon", "Enak", "Ramai", "Antrian Panjang")
+            val forYouDetailsList = listOf(
+                // 1. Bakso Solo Samrat (Sesuai detail gambar foto 1 Bakso Samrat)
+                RestaurantDetails(price = "Rp25.000 - Rp60.000 per orang", hours = "Buka 10.00 - 22.00", location = "Kelapa Dua, Kabupaten Tangerang", distance = "±450 m", rating = "4.9", viewers = "45.0K", tags = listOf("Halal", "Bakso", "Keju Lumer", "Enak", "Ramai")),
+                // 2. Sate Taichan Bang Yoyo
+                RestaurantDetails(price = "Rp25.000 - Rp50.000 per orang", hours = "Buka 11.00 - 23.00", location = "Tebet, Jakarta Selatan", distance = "±35.1 km", rating = "4.9", viewers = "28.9K", tags = listOf("Halal", "Pedas", "Sate Ayam", "Ramai", "Nongkrong")),
+                // 3. Kedai Sambal Cobek Bu Yudhi
+                RestaurantDetails(price = "Rp20.000 - Rp50.000 per orang", hours = "Buka 10.00 - 19.30", location = "Medang, Pagedangan, Kabupaten Tangerang", distance = "±1.1 km", rating = "4.0", viewers = "10.2K", tags = listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai")),
+                // 4. Secret Sushi by Okinawa Sushi
+                RestaurantDetails(price = "Rp250.000 - 500.000 per orang", hours = "Buka 10.00 - 22.00", location = "Bintaro Jaya Xchange Mall 2, Pondok Aren", distance = "±20.8 km", rating = "4.3", viewers = "54.1K", tags = listOf("Halal", "Jepang", "Sushi", "Sashimi", "Casual Dinner")),
+                // 5. Obihiro Nikudon
+                RestaurantDetails(price = "Rp75.000 - Rp100.000 per orang", hours = "Buka 08.00 - 22.00", location = "Blok M, Jakarta Selatan", distance = "±25.6 km", rating = "4.8", viewers = "89.2K", tags = listOf("Halal", "Nikudon", "Enak", "Ramai", "Antrian Panjang"))
             )
 
             forYouList.forEachIndexed { index, item ->
+                val details = forYouDetailsList[index]
                 item {
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                         RestaurantCardItem(
                             imageRes = item.first,
                             title = item.second,
                             category = item.third,
-                            price = "Rp25.000 - Rp50.000 per orang",
-                            hours = "Buka 11.00 - 23.00",
-                            location = "Jakarta Selatan",
-                            distance = "±35.1 km",
-                            rating = "4.9",
-                            viewers = "28.9K",
-                            tags = forYouTagsList[index]
+                            price = details.price,
+                            hours = details.hours,
+                            location = details.location,
+                            distance = details.distance,
+                            rating = details.rating,
+                            viewers = details.viewers,
+                            tags = details.tags
                         )
                     }
                 }
@@ -490,6 +468,16 @@ fun HomeForYou(
         }
     }
 }
+
+data class RestaurantDetails(
+    val price: String,
+    val hours: String,
+    val location: String,
+    val distance: String,
+    val rating: String,
+    val viewers: String,
+    val tags: List<String>
+)
 
 @Composable
 fun RestaurantCardItem(
@@ -648,7 +636,6 @@ fun RestaurantCardItem(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(tags) { tag ->
-                        // Dinamis menyesuaikan warna tag sesuai jenisnya
                         val (bgColor, textColor) = when (tag) {
                             "Halal" -> Pair(YumiGreenBG, YumiGreen)
                             "Nongkrong", "Casual Dinner", "Antrian Panjang" -> Pair(YumiBlueBG, YumiBlue)

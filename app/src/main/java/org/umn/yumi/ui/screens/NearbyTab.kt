@@ -1,4 +1,4 @@
-package org.umn.yumi.ui.screens
+package org.umn.yumi.ui.screens.homepage
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -336,6 +336,7 @@ fun HomeNearby(
             }
 
             val nearbyList = listOf(
+                Triple(R.drawable.kopi_kenangan_food, "Kopi Kenangan", "Kedai Kopi, Roti & Minuman"),
                 Triple(R.drawable.kwetiau_aho, "Kwetiau 28 AHo", "Restoran China"),
                 Triple(R.drawable.mekdi, "McDonald's", "Restoran Cepat Saji"),
                 Triple(R.drawable.podjok_nusantara, "Podjok Selera Nusantara", "Restoran Indonesia"),
@@ -344,30 +345,31 @@ fun HomeNearby(
                 Triple(R.drawable.bu_yudhi, "Kedai Sambal Cobek Bu Yudhi", "Ayam & Bebek, Aneka Sambal")
             )
 
-            // Tag status yang disesuaikan dengan gambar referensi Nearby
-            val nearbyTagsList = listOf(
-                listOf("Halal", "Kwetiau Sapi", "Nasi Goreng", "Enak", "Garansi"),
-                listOf("Halal", "Ayam Spicy", "Es Krim", "Burger", "Wi-Fi"),
-                listOf("Halal", "Rumahan", "Dekat Kampus", "Murah Meriah"),
-                listOf("Halal", "Prasmanan", "Porsi Mantap", "Murah Meriah"),
-                listOf("Halal", "Burger", "Daging Juicy", "Aesthetic"),
-                listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai")
+            val nearbyDetailsList = listOf(
+                NearbyDetails(price = "Rp15.000 - Rp45.000 per orang", hours = "Buka 08.00 - 22.00", location = "Ruko Bolsena, Kabupaten Tangerang", distance = "±2.2 km", rating = "4.8", viewers = "15.4K", tags = listOf("Halal", "Kopi", "Roti", "Enak", "Nongkrong")),
+                NearbyDetails(price = "Rp50.000 - Rp75.000 per orang", hours = "Buka 09.00 - 23.00", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = "4.5", viewers = "1.2K", tags = listOf("Halal", "Kwetiau Sapi", "Nasi Goreng", "Enak", "Garansi")),
+                NearbyDetails(price = "Rp30.000 - Rp75.000 per orang", hours = "Buka 24 Jam", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = "4.7", viewers = "17.0K", tags = listOf("Halal", "Ayam Spicy", "Es Krim", "Burger", "Wi-Fi")),
+                NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", hours = "Buka 10.00 - 22.00", location = "8N & 8M, Jl. Quantum Raya, Kabupaten Tangerang", distance = "±390 m", rating = "3.3", viewers = "1.3K", tags = listOf("Halal", "Rumahan", "Dekat Kampus", "Murah Meriah")),
+                NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", hours = "Buka 09.00 - 17.00", location = "Ruko Newton Barat, Kabupaten Tangerang", distance = "±450 m", rating = "3.5", viewers = "2.4K", tags = listOf("Halal", "Prasmanan", "Porsi Mantap", "Murah Meriah")),
+                NearbyDetails(price = "Rp75.000 - Rp100.000 per orang", hours = "Buka 10.00 - 21.00", location = "Bez Walk South Wing, Kabupaten Tangerang", distance = "±742 km", rating = "4.2", viewers = "5.6K", tags = listOf("Halal", "Burger", "Daging Juicy", "Aesthetic")),
+                NearbyDetails(price = "Rp20.000 - Rp50.000 per orang", hours = "Buka 10.00 - 19.30", location = "Medang, Pagedangan, Kabupaten Tangerang", distance = "±1.1 km", rating = "4.0", viewers = "10.2K", tags = listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai"))
             )
 
             nearbyList.forEachIndexed { index, item ->
+                val details = nearbyDetailsList[index]
                 item {
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                         NearbyRestaurantCardItem(
                             imageRes = item.first,
                             title = item.second,
                             category = item.third,
-                            price = "Rp25.000 - Rp75.000 per orang",
-                            hours = "Buka 09.00 - 23.00",
-                            location = "Kabupaten Tangerang",
-                            distance = "±300 m",
-                            rating = "4.5",
-                            viewers = "1.2K",
-                            tags = nearbyTagsList[index]
+                            price = details.price,
+                            hours = details.hours,
+                            location = details.location,
+                            distance = details.distance,
+                            rating = details.rating,
+                            viewers = details.viewers,
+                            tags = details.tags
                         )
                     }
                 }
@@ -375,6 +377,16 @@ fun HomeNearby(
         }
     }
 }
+
+data class NearbyDetails(
+    val price: String,
+    val hours: String,
+    val location: String,
+    val distance: String,
+    val rating: String,
+    val viewers: String,
+    val tags: List<String>
+)
 
 @Composable
 fun NearbyRestaurantCardItem(
@@ -536,7 +548,6 @@ fun NearbyRestaurantCardItem(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(tags) { tag ->
-                        // Dinamis menyesuaikan warna tag sesuai jenisnya
                         val (bgColor, textColor) = when (tag) {
                             "Halal" -> Pair(YumiGreenBG, YumiGreen)
                             "Aesthetic", "Wi-Fi" -> Pair(YumiBlueBG, YumiBlue)
