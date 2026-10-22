@@ -29,7 +29,7 @@ fun MapLocation(
             .background(YumiCream)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.map_gading_serpong),
+            painter = painterResource(id = R.drawable.rute_bakso_solo),
             contentDescription = "Peta Gading Serpong",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()

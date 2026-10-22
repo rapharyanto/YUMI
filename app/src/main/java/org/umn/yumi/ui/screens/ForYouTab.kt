@@ -95,7 +95,7 @@ fun Header(modifier: Modifier = Modifier) {
                             modifier = Modifier.size(17.dp)
                         )
                         Text(
-                            text = "Gading Serpong",
+                            text = "Jakarta Selatan",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = YumiTextDark,

@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -41,12 +40,10 @@ fun HomeNearby(
     onBookmarkClick: (String) -> Unit = {},
     bookmarkedItems: Set<String> = emptySet()
 ) {
-    // State lokal khusus untuk Filter UI Chips
     var filterOpenNow by remember { mutableStateOf(false) }
     var filterRatingHigh by remember { mutableStateOf(false) }
     var filterHalalOnly by remember { mutableStateOf(false) }
 
-    // State lokal untuk Filter Rentang Harga (Opsi: "<50rb", "50rb-100rb", "100rb-250rb", ">250rb")
     var selectedPriceRange by remember { mutableStateOf<String?>(null) }
     var tempSelectedPriceRange by remember { mutableStateOf<String?>(null) }
     var showPriceDialog by remember { mutableStateOf(false) }
@@ -57,6 +54,7 @@ fun HomeNearby(
             .background(YumiCream)
     ) {
         Header()
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,7 +62,6 @@ fun HomeNearby(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Tab switcher
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,7 +134,6 @@ fun HomeNearby(
                 }
             }
 
-            // Box lokasi titik kamu saat ini
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,7 +178,7 @@ fun HomeNearby(
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                text = "Universitas Multimedia Nusantara",
+                                text = "Senopati",
                                 color = Color(0xff59413c),
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
@@ -198,7 +194,7 @@ fun HomeNearby(
                         shape = RoundedCornerShape(30.dp),
                         color = Color(0xfffaebdb),
                         shadowElevation = 1.dp,
-                        modifier = Modifier.clickable { /* action ubah lokasi */ }
+                        modifier = Modifier.clickable { }
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -222,9 +218,10 @@ fun HomeNearby(
                 }
             }
 
-            // Filter Chips Horizontal (Interaktif)
             LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 2.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 val filters = listOf("Buka Sekarang", "Rating 4.5+", "Halal", "Harga")
@@ -286,148 +283,140 @@ fun HomeNearby(
                     }
                 }
             }
-        }
 
-        // Data Sumber Restoran
-        val rawNearbyList = listOf(
-            Triple(R.drawable.kopi_kenangan_food, "Kopi Kenangan", "Kedai Kopi, Roti & Minuman"),
-            Triple(R.drawable.kwetiau_aho, "Kwetiau 28 AHo", "Restoran China"),
-            Triple(R.drawable.mekdi, "McDonald's", "Restoran Cepat Saji"),
-            Triple(R.drawable.podjok_nusantara, "Podjok Selera Nusantara", "Restoran Indonesia"),
-            Triple(R.drawable.warton, "Warton Gading Serpong", "Warung Tegal"),
-            Triple(R.drawable.five_monkeys, "Five Monkeys Burger", "Restoran Hamburger"),
-            Triple(R.drawable.bu_yudhi, "Kedai Sambal Cobek Bu Yudhi", "Ayam & Bebek, Aneka Sambal")
-        )
+            val rawNearbyList = listOf(
+                Triple(R.drawable.kopi_kenangan_food, "Kopi Kenangan", "Kedai Kopi, Roti & Minuman"),
+                Triple(R.drawable.kwetiau_aho, "Kwetiau 28 AHo", "Restoran China"),
+                Triple(R.drawable.mekdi, "McDonald's", "Restoran Cepat Saji"),
+                Triple(R.drawable.podjok_nusantara, "Podjok Selera Nusantara", "Restoran Indonesia"),
+                Triple(R.drawable.warton, "Warteg Kharisma Bahari", "Warung Tegal"),
+                Triple(R.drawable.five_monkeys, "Five Monkeys Burger", "Restoran Hamburger"),
+            )
 
-        val rawNearbyDetailsList = listOf(
-            NearbyDetails(price = "Rp15.000 - Rp45.000 per orang", minPrice = 15000, maxPrice = 45000, hours = "Buka 08.00 - 22.00", location = "Ruko Bolsena, Kabupaten Tangerang", distance = "±2.2 km", rating = 4.8f, viewers = "15.4K", tags = listOf("Halal", "Kopi", "Roti", "Enak", "Nongkrong")),
-            NearbyDetails(price = "Rp50.000 - Rp75.000 per orang", minPrice = 50000, maxPrice = 75000, hours = "Buka 09.00 - 23.00", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = 4.5f, viewers = "1.2K", tags = listOf("Halal", "Kwetiau Sapi", "Nasi Goreng", "Enak", "Garansi")),
-            NearbyDetails(price = "Rp30.000 - Rp75.000 per orang", minPrice = 30000, maxPrice = 75000, hours = "Buka 24 Jam", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = 4.7f, viewers = "17.0K", tags = listOf("Halal", "Ayam Spicy", "Es Krim", "Burger", "Wi-Fi")),
-            NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", minPrice = 25000, maxPrice = 50000, hours = "Buka 10.00 - 22.00", location = "8N & 8M, Jl. Quantum Raya, Kabupaten Tangerang", distance = "±390 m", rating = 3.3f, viewers = "1.3K", tags = listOf("Halal", "Rumahan", "Dekat Kampus", "Murah Meriah")),
-            NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", minPrice = 25000, maxPrice = 50000, hours = "Buka 09.00 - 17.00", location = "Ruko Newton Barat, Kabupaten Tangerang", distance = "±450 m", rating = 3.5f, viewers = "2.4K", tags = listOf("Halal", "Prasmanan", "Porsi Mantap", "Murah Meriah")),
-            NearbyDetails(price = "Rp75.000 - Rp100.000 per orang", minPrice = 75000, maxPrice = 100000, hours = "Buka 10.00 - 21.00", location = "Bez Walk South Wing, Kabupaten Tangerang", distance = "±742 km", rating = 4.2f, viewers = "5.6K", tags = listOf("Halal", "Burger", "Daging Juicy", "Aesthetic")),
-            NearbyDetails(price = "Rp20.000 - Rp50.000 per orang", minPrice = 20000, maxPrice = 50000, hours = "Buka 10.00 - 19.30", location = "Medang, Pagedangan, Kabupaten Tangerang", distance = "±1.1 km", rating = 4.0f, viewers = "10.2K", tags = listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai"))
-        )
+            val rawNearbyDetailsList = listOf(
+                NearbyDetails(price = "Rp15.000 - Rp45.000 per orang", minPrice = 15000, maxPrice = 45000, hours = "Buka 08.00 - 22.00", location = "Ruko Jalan Jeruk Jagakarsa, Jakarta Selatan", distance = "±2.2 km", rating = 4.8f, viewers = "15.4K", tags = listOf("Halal", "Kopi", "Roti", "Enak", "Nongkrong")),
+                NearbyDetails(price = "Rp50.000 - Rp75.000 per orang", minPrice = 50000, maxPrice = 75000, hours = "Buka 09.00 - 23.00", location = "Pondok Indah Mall 2, Jakarta Selatan", distance = "±300 m", rating = 4.5f, viewers = "1.2K", tags = listOf("Halal", "Kwetiau Sapi", "Nasi Goreng", "Enak", "Garansi")),
+                NearbyDetails(price = "Rp30.000 - Rp75.000 per orang", minPrice = 30000, maxPrice = 75000, hours = "Buka 24 Jam", location = "Tebet, Jakarta Selatan", distance = "±300 m", rating = 4.7f, viewers = "17.0K", tags = listOf("Halal", "Ayam Spicy", "Es Krim", "Burger", "Wi-Fi")),
+                NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", minPrice = 25000, maxPrice = 50000, hours = "Buka 10.00 - 22.00", location = "Blok M, Jakarta Selatan", distance = "±390 m", rating = 3.3f, viewers = "1.3K", tags = listOf("Halal", "Rumahan", "Dekat Kampus", "Murah Meriah")),
+                NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", minPrice = 25000, maxPrice = 50000, hours = "Buka 09.00 - 17.00", location = "Senayan, Jakarta Selatan", distance = "±450 m", rating = 3.5f, viewers = "2.4K", tags = listOf("Halal", "Prasmanan", "Porsi Mantap", "Murah Meriah")),
+                NearbyDetails(price = "Rp75.000 - Rp100.000 per orang", minPrice = 75000, maxPrice = 100000, hours = "Buka 10.00 - 21.00", location = "Plaza Senayan, Jakarta Selatan", distance = "±742 km", rating = 4.2f, viewers = "5.6K", tags = listOf("Halal", "Burger", "Daging Juicy", "Aesthetic"))
+            )
 
-        // Logika Penyaringan Filter Rentang Harga
-        val filteredIndices = rawNearbyList.indices.filter { idx ->
-            val details = rawNearbyDetailsList[idx]
-            val matchOpen = !filterOpenNow || details.hours.contains("Buka", ignoreCase = true)
-            val matchRating = !filterRatingHigh || details.rating >= 4.5f
-            val matchHalal = !filterHalalOnly || details.tags.contains("Halal")
+            val filteredIndices = rawNearbyList.indices.filter { idx ->
+                val details = rawNearbyDetailsList[idx]
+                val matchOpen = !filterOpenNow || details.hours.contains("Buka", ignoreCase = true)
+                val matchRating = !filterRatingHigh || details.rating >= 4.5f
+                val matchHalal = !filterHalalOnly || details.tags.contains("Halal")
 
-            val matchPrice = when (selectedPriceRange) {
-                "<50rb" -> details.minPrice < 50000
-                "50rb-100rb" -> details.minPrice in 50000..100000 || details.maxPrice in 50000..100000
-                "100rb-250rb" -> details.minPrice in 100000..250000 || details.maxPrice in 100000..250000
-                ">250rb" -> details.maxPrice > 250000
-                else -> true
+                val matchPrice = when (selectedPriceRange) {
+                    "<50rb" -> details.minPrice < 50000
+                    "50rb-100rb" -> details.minPrice in 50000..100000 || details.maxPrice in 50000..100000
+                    "100rb-250rb" -> details.minPrice in 100000..250000 || details.maxPrice in 100000..250000
+                    ">250rb" -> details.maxPrice > 250000
+                    else -> true
+                }
+
+                matchOpen && matchRating && matchHalal && matchPrice
             }
 
-            matchOpen && matchRating && matchHalal && matchPrice
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(top = 2.dp, bottom = 100.dp)
-        ) {
-            item {
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 0.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_urut_resto_terdekat),
-                                contentDescription = "Near Icon",
-                                colorFilter = ColorFilter.tint(YumiBlackSubTitle),
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text(
-                                text = "Terdekat dari Kamu",
-                                color = YumiBlackSubTitle,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_urut_resto_terdekat),
+                            contentDescription = "Near Icon",
+                            colorFilter = ColorFilter.tint(YumiBlackSubTitle),
+                            modifier = Modifier.size(18.dp)
+                        )
                         Text(
-                            text = "Menampilkan ${filteredIndices.size} tempat makan sesuai filter",
-                            color = YumiTextDark,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
+                            text = "Terdekat dari Kamu",
+                            color = YumiBlackSubTitle,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
+                    Text(
+                        text = "Menampilkan ${filteredIndices.size} tempat makan sesuai filter",
+                        color = YumiTextDark,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
-                    Surface(
-                        shape = RoundedCornerShape(30.dp),
-                        color = Color(0xfffaebdb),
-                        shadowElevation = 1.dp,
-                        modifier = Modifier.clickable { onMapClick() }
+                Surface(
+                    shape = RoundedCornerShape(30.dp),
+                    color = Color(0xfffaebdb),
+                    shadowElevation = 1.dp,
+                    modifier = Modifier.clickable { onMapClick() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_navbar_peta),
-                                contentDescription = "Map",
-                                colorFilter = ColorFilter.tint(Color(0xffae3115)),
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Text(
-                                text = "Buka Peta",
-                                color = Color(0xffae3115),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1
-                            )
-                        }
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_navbar_peta),
+                            contentDescription = "Map",
+                            colorFilter = ColorFilter.tint(Color(0xffae3115)),
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Text(
+                            text = "Buka Peta",
+                            color = Color(0xffae3115),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
                     }
                 }
             }
 
-            if (filteredIndices.isEmpty()) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Tidak ada restoran yang cocok dengan filtermu.",
-                            color = YumiTextDark,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
-                filteredIndices.forEach { index ->
-                    val item = rawNearbyList[index]
-                    val details = rawNearbyDetailsList[index]
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 100.dp)
+            ) {
+                if (filteredIndices.isEmpty()) {
                     item {
-                        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Tidak ada restoran yang cocok dengan filtermu 🥺",
+                                color = YumiTextDark,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                } else {
+                    filteredIndices.forEach { index ->
+                        val item = rawNearbyList[index]
+                        val details = rawNearbyDetailsList[index]
+                        item {
                             NearbyRestaurantCardItem(
                                 imageRes = item.first,
                                 title = item.second,
@@ -451,7 +440,6 @@ fun HomeNearby(
         }
     }
 
-    // Custom Pop-up Dialog Opsi Filter Harga
     if (showPriceDialog) {
         val priceOptions = listOf("<50rb", "50rb-100rb", "100rb-250rb", ">250rb")
 
@@ -546,7 +534,6 @@ data class NearbyDetails(
     val tags: List<String>
 )
 
-// Komponen Card Restoran untuk Tab Nearby
 @Composable
 fun NearbyRestaurantCardItem(
     imageRes: Int,
@@ -735,7 +722,6 @@ fun NearbyRestaurantCardItem(
                 }
             }
 
-            // Tombol Bookmark interaktif
             Surface(
                 color = YumiCream.copy(alpha = 0.8f),
                 shape = CircleShape,
@@ -803,7 +789,6 @@ fun NearbyRestaurantCardItem(
                     }
                 }
 
-                // Tombol Share interaktif
                 Surface(
                     color = YumiCream.copy(alpha = 0.85f),
                     shape = CircleShape,
