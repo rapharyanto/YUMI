@@ -1,4 +1,4 @@
-package org.umn.yumi.ui.screens.homepage
+package org.umn.yumi.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -7,8 +7,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.umn.yumi.R
+import org.umn.yumi.ui.screens.HomeNearby
 import org.umn.yumi.ui.theme.*
 
 // Bentuk Wave Header
@@ -99,11 +102,6 @@ fun Header(modifier: Modifier = Modifier) {
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_panah_bawah),
-                            contentDescription = "Dropdown Arrow",
-                            modifier = Modifier.size(9.dp)
-                        )
                     }
                 }
             }
@@ -132,7 +130,13 @@ fun Header(modifier: Modifier = Modifier) {
 @Composable
 fun HomeForYou(
     selectedTab: String = "For You",
-    onTabSelected: (String) -> Unit = {}
+    onTabSelected: (String) -> Unit = {},
+    onRestoClick: (String) -> Unit = {},
+    onSeeAllClick: () -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
+    onShareClick: (String) -> Unit = {},
+    onBookmarkClick: (String) -> Unit = {},
+    bookmarkedItems: Set<String> = emptySet()
 ) {
     Column(
         modifier = Modifier
@@ -222,6 +226,7 @@ fun HomeForYou(
         }
 
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
@@ -419,12 +424,12 @@ fun HomeForYou(
                         color = YumiRed,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable { onSeeAllClick() }
                     )
                 }
             }
 
-            // Menambahkan Bakso Solo Samrat di urutan pertama, diikuti Sate Taichan, Bu Yudhi, Secret Sushi, dan Obihiro Nikudon
             val forYouList = listOf(
                 Triple(R.drawable.bakso_food, "Bakso Solo Samrat", "Bakso, Aneka Es & Masakan Jawa"),
                 Triple(R.drawable.sate_taichan_bang_yoyo, "Sate Taichan Bang Yoyo", "Sate & Grill, Street Food"),
@@ -434,15 +439,10 @@ fun HomeForYou(
             )
 
             val forYouDetailsList = listOf(
-                // 1. Bakso Solo Samrat (Sesuai detail gambar foto 1 Bakso Samrat)
                 RestaurantDetails(price = "Rp25.000 - Rp60.000 per orang", hours = "Buka 10.00 - 22.00", location = "Kelapa Dua, Kabupaten Tangerang", distance = "±450 m", rating = "4.9", viewers = "45.0K", tags = listOf("Halal", "Bakso", "Keju Lumer", "Enak", "Ramai")),
-                // 2. Sate Taichan Bang Yoyo
                 RestaurantDetails(price = "Rp25.000 - Rp50.000 per orang", hours = "Buka 11.00 - 23.00", location = "Tebet, Jakarta Selatan", distance = "±35.1 km", rating = "4.9", viewers = "28.9K", tags = listOf("Halal", "Pedas", "Sate Ayam", "Ramai", "Nongkrong")),
-                // 3. Kedai Sambal Cobek Bu Yudhi
                 RestaurantDetails(price = "Rp20.000 - Rp50.000 per orang", hours = "Buka 10.00 - 19.30", location = "Medang, Pagedangan, Kabupaten Tangerang", distance = "±1.1 km", rating = "4.0", viewers = "10.2K", tags = listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai")),
-                // 4. Secret Sushi by Okinawa Sushi
                 RestaurantDetails(price = "Rp250.000 - 500.000 per orang", hours = "Buka 10.00 - 22.00", location = "Bintaro Jaya Xchange Mall 2, Pondok Aren", distance = "±20.8 km", rating = "4.3", viewers = "54.1K", tags = listOf("Halal", "Jepang", "Sushi", "Sashimi", "Casual Dinner")),
-                // 5. Obihiro Nikudon
                 RestaurantDetails(price = "Rp75.000 - Rp100.000 per orang", hours = "Buka 08.00 - 22.00", location = "Blok M, Jakarta Selatan", distance = "±25.6 km", rating = "4.8", viewers = "89.2K", tags = listOf("Halal", "Nikudon", "Enak", "Ramai", "Antrian Panjang"))
             )
 
@@ -460,7 +460,11 @@ fun HomeForYou(
                             distance = details.distance,
                             rating = details.rating,
                             viewers = details.viewers,
-                            tags = details.tags
+                            tags = details.tags,
+                            isBookmarked = bookmarkedItems.contains(item.second),
+                            onCardClick = { onRestoClick(item.second) },
+                            onShareClick = { onShareClick(item.second) },
+                            onBookmarkClick = { onBookmarkClick(item.second) }
                         )
                     }
                 }
@@ -490,13 +494,19 @@ fun RestaurantCardItem(
     distance: String,
     rating: String,
     viewers: String,
-    tags: List<String>
+    tags: List<String>,
+    isBookmarked: Boolean,
+    onCardClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onBookmarkClick: () -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(25.dp),
         colors = CardDefaults.cardColors(containerColor = YumiCardCream),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCardClick() }
     ) {
         Box(
             modifier = Modifier
@@ -684,6 +694,7 @@ fun RestaurantCardItem(
                 }
             }
 
+            // Tombol Bookmark interaktif
             Surface(
                 color = YumiCream.copy(alpha = 0.8f),
                 shape = CircleShape,
@@ -691,12 +702,13 @@ fun RestaurantCardItem(
                     .padding(10.dp)
                     .align(Alignment.TopEnd)
                     .size(32.dp)
+                    .clickable { onBookmarkClick() }
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_bookmark),
                         contentDescription = "Bookmark",
-                        colorFilter = ColorFilter.tint(YumiTextDark),
+                        colorFilter = ColorFilter.tint(if (isBookmarked) YumiRed else YumiTextDark),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -750,10 +762,13 @@ fun RestaurantCardItem(
                     }
                 }
 
+                // Tombol Share interaktif
                 Surface(
                     color = YumiCream.copy(alpha = 0.85f),
                     shape = CircleShape,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable { onShareClick() }
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Image(

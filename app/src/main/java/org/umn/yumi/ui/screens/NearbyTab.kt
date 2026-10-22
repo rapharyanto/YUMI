@@ -1,4 +1,4 @@
-package org.umn.yumi.ui.screens.homepage
+package org.umn.yumi.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -11,10 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +26,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.umn.yumi.R
@@ -38,8 +34,23 @@ import org.umn.yumi.ui.theme.*
 @Composable
 fun HomeNearby(
     selectedTab: String = "Nearby",
-    onTabSelected: (String) -> Unit = {}
+    onTabSelected: (String) -> Unit = {},
+    onRestoClick: (String) -> Unit = {},
+    onMapClick: () -> Unit = {},
+    onShareClick: (String) -> Unit = {},
+    onBookmarkClick: (String) -> Unit = {},
+    bookmarkedItems: Set<String> = emptySet()
 ) {
+    // State lokal khusus untuk Filter UI Chips
+    var filterOpenNow by remember { mutableStateOf(false) }
+    var filterRatingHigh by remember { mutableStateOf(false) }
+    var filterHalalOnly by remember { mutableStateOf(false) }
+
+    // State lokal untuk Filter Rentang Harga (Opsi: "<50rb", "50rb-100rb", "100rb-250rb", ">250rb")
+    var selectedPriceRange by remember { mutableStateOf<String?>(null) }
+    var tempSelectedPriceRange by remember { mutableStateOf<String?>(null) }
+    var showPriceDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,7 +64,7 @@ fun HomeNearby(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // tab switcher
+            // Tab switcher
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,16 +137,14 @@ fun HomeNearby(
                 }
             }
 
-            // box lokasi titik kamu saat ini
+            // Box lokasi titik kamu saat ini
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .border(BorderStroke(1.dp, Color(0xffede6d5)), RoundedCornerShape(14.dp))
                     .background(YumiCardCream)
-                    .shadow(elevation = 1.dp, shape = RoundedCornerShape(14.dp))
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(
@@ -164,8 +173,7 @@ fun HomeNearby(
                         }
 
                         Column(
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxHeight()
+                            verticalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 text = "Titik Kamu Saat Ini",
@@ -214,19 +222,42 @@ fun HomeNearby(
                 }
             }
 
-            // filter chips horizontal
+            // Filter Chips Horizontal (Interaktif)
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 val filters = listOf("Buka Sekarang", "Rating 4.5+", "Halal", "Harga")
                 items(filters) { filter ->
+                    val isSelected = when (filter) {
+                        "Buka Sekarang" -> filterOpenNow
+                        "Rating 4.5+" -> filterRatingHigh
+                        "Halal" -> filterHalalOnly
+                        "Harga" -> selectedPriceRange != null
+                        else -> false
+                    }
+
+                    val chipBg = if (isSelected) YumiRed else YumiCardCream
+                    val chipText = if (isSelected) YumiCream else Color(0xffae3115)
+
                     Surface(
                         shape = RoundedCornerShape(30.dp),
-                        color = YumiCardCream,
+                        color = chipBg,
                         shadowElevation = 1.dp,
-                        border = BorderStroke(1.dp, Color(0xffede6d5)),
-                        modifier = Modifier.height(32.dp)
+                        border = BorderStroke(1.dp, if (isSelected) YumiRed else Color(0xffede6d5)),
+                        modifier = Modifier
+                            .height(32.dp)
+                            .clickable {
+                                when (filter) {
+                                    "Buka Sekarang" -> filterOpenNow = !filterOpenNow
+                                    "Rating 4.5+" -> filterRatingHigh = !filterRatingHigh
+                                    "Halal" -> filterHalalOnly = !filterHalalOnly
+                                    "Harga" -> {
+                                        tempSelectedPriceRange = selectedPriceRange
+                                        showPriceDialog = true
+                                    }
+                                }
+                            }
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp),
@@ -242,19 +273,58 @@ fun HomeNearby(
                             Image(
                                 painter = painterResource(id = iconRes),
                                 contentDescription = filter,
-                                colorFilter = ColorFilter.tint(Color(0xffae3115)),
+                                colorFilter = ColorFilter.tint(chipText),
                                 modifier = Modifier.size(13.dp)
                             )
                             Text(
-                                text = filter,
-                                color = Color(0xffae3115),
+                                text = if (filter == "Harga" && selectedPriceRange != null) selectedPriceRange!! else filter,
+                                color = chipText,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
                 }
             }
+        }
+
+        // Data Sumber Restoran
+        val rawNearbyList = listOf(
+            Triple(R.drawable.kopi_kenangan_food, "Kopi Kenangan", "Kedai Kopi, Roti & Minuman"),
+            Triple(R.drawable.kwetiau_aho, "Kwetiau 28 AHo", "Restoran China"),
+            Triple(R.drawable.mekdi, "McDonald's", "Restoran Cepat Saji"),
+            Triple(R.drawable.podjok_nusantara, "Podjok Selera Nusantara", "Restoran Indonesia"),
+            Triple(R.drawable.warton, "Warton Gading Serpong", "Warung Tegal"),
+            Triple(R.drawable.five_monkeys, "Five Monkeys Burger", "Restoran Hamburger"),
+            Triple(R.drawable.bu_yudhi, "Kedai Sambal Cobek Bu Yudhi", "Ayam & Bebek, Aneka Sambal")
+        )
+
+        val rawNearbyDetailsList = listOf(
+            NearbyDetails(price = "Rp15.000 - Rp45.000 per orang", minPrice = 15000, maxPrice = 45000, hours = "Buka 08.00 - 22.00", location = "Ruko Bolsena, Kabupaten Tangerang", distance = "±2.2 km", rating = 4.8f, viewers = "15.4K", tags = listOf("Halal", "Kopi", "Roti", "Enak", "Nongkrong")),
+            NearbyDetails(price = "Rp50.000 - Rp75.000 per orang", minPrice = 50000, maxPrice = 75000, hours = "Buka 09.00 - 23.00", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = 4.5f, viewers = "1.2K", tags = listOf("Halal", "Kwetiau Sapi", "Nasi Goreng", "Enak", "Garansi")),
+            NearbyDetails(price = "Rp30.000 - Rp75.000 per orang", minPrice = 30000, maxPrice = 75000, hours = "Buka 24 Jam", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = 4.7f, viewers = "17.0K", tags = listOf("Halal", "Ayam Spicy", "Es Krim", "Burger", "Wi-Fi")),
+            NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", minPrice = 25000, maxPrice = 50000, hours = "Buka 10.00 - 22.00", location = "8N & 8M, Jl. Quantum Raya, Kabupaten Tangerang", distance = "±390 m", rating = 3.3f, viewers = "1.3K", tags = listOf("Halal", "Rumahan", "Dekat Kampus", "Murah Meriah")),
+            NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", minPrice = 25000, maxPrice = 50000, hours = "Buka 09.00 - 17.00", location = "Ruko Newton Barat, Kabupaten Tangerang", distance = "±450 m", rating = 3.5f, viewers = "2.4K", tags = listOf("Halal", "Prasmanan", "Porsi Mantap", "Murah Meriah")),
+            NearbyDetails(price = "Rp75.000 - Rp100.000 per orang", minPrice = 75000, maxPrice = 100000, hours = "Buka 10.00 - 21.00", location = "Bez Walk South Wing, Kabupaten Tangerang", distance = "±742 km", rating = 4.2f, viewers = "5.6K", tags = listOf("Halal", "Burger", "Daging Juicy", "Aesthetic")),
+            NearbyDetails(price = "Rp20.000 - Rp50.000 per orang", minPrice = 20000, maxPrice = 50000, hours = "Buka 10.00 - 19.30", location = "Medang, Pagedangan, Kabupaten Tangerang", distance = "±1.1 km", rating = 4.0f, viewers = "10.2K", tags = listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai"))
+        )
+
+        // Logika Penyaringan Filter Rentang Harga
+        val filteredIndices = rawNearbyList.indices.filter { idx ->
+            val details = rawNearbyDetailsList[idx]
+            val matchOpen = !filterOpenNow || details.hours.contains("Buka", ignoreCase = true)
+            val matchRating = !filterRatingHigh || details.rating >= 4.5f
+            val matchHalal = !filterHalalOnly || details.tags.contains("Halal")
+
+            val matchPrice = when (selectedPriceRange) {
+                "<50rb" -> details.minPrice < 50000
+                "50rb-100rb" -> details.minPrice in 50000..100000 || details.maxPrice in 50000..100000
+                "100rb-250rb" -> details.minPrice in 100000..250000 || details.maxPrice in 100000..250000
+                ">250rb" -> details.maxPrice > 250000
+                else -> true
+            }
+
+            matchOpen && matchRating && matchHalal && matchPrice
         }
 
         LazyColumn(
@@ -297,7 +367,7 @@ fun HomeNearby(
                             )
                         }
                         Text(
-                            text = "Jarak dihitung akurat berdasarkan lokasi GPS saat ini",
+                            text = "Menampilkan ${filteredIndices.size} tempat makan sesuai filter",
                             color = YumiTextDark,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
@@ -310,7 +380,7 @@ fun HomeNearby(
                         shape = RoundedCornerShape(30.dp),
                         color = Color(0xfffaebdb),
                         shadowElevation = 1.dp,
-                        modifier = Modifier.clickable { /* action buka peta */ }
+                        modifier = Modifier.clickable { onMapClick() }
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -335,59 +405,148 @@ fun HomeNearby(
                 }
             }
 
-            val nearbyList = listOf(
-                Triple(R.drawable.kopi_kenangan_food, "Kopi Kenangan", "Kedai Kopi, Roti & Minuman"),
-                Triple(R.drawable.kwetiau_aho, "Kwetiau 28 AHo", "Restoran China"),
-                Triple(R.drawable.mekdi, "McDonald's", "Restoran Cepat Saji"),
-                Triple(R.drawable.podjok_nusantara, "Podjok Selera Nusantara", "Restoran Indonesia"),
-                Triple(R.drawable.warton, "Warton Gading Serpong", "Warung Tegal"),
-                Triple(R.drawable.five_monkeys, "Five Monkeys Burger", "Restoran Hamburger"),
-                Triple(R.drawable.bu_yudhi, "Kedai Sambal Cobek Bu Yudhi", "Ayam & Bebek, Aneka Sambal")
-            )
-
-            val nearbyDetailsList = listOf(
-                NearbyDetails(price = "Rp15.000 - Rp45.000 per orang", hours = "Buka 08.00 - 22.00", location = "Ruko Bolsena, Kabupaten Tangerang", distance = "±2.2 km", rating = "4.8", viewers = "15.4K", tags = listOf("Halal", "Kopi", "Roti", "Enak", "Nongkrong")),
-                NearbyDetails(price = "Rp50.000 - Rp75.000 per orang", hours = "Buka 09.00 - 23.00", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = "4.5", viewers = "1.2K", tags = listOf("Halal", "Kwetiau Sapi", "Nasi Goreng", "Enak", "Garansi")),
-                NearbyDetails(price = "Rp30.000 - Rp75.000 per orang", hours = "Buka 24 Jam", location = "Summarecon Digital Center, Kabupaten Tangerang", distance = "±300 m", rating = "4.7", viewers = "17.0K", tags = listOf("Halal", "Ayam Spicy", "Es Krim", "Burger", "Wi-Fi")),
-                NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", hours = "Buka 10.00 - 22.00", location = "8N & 8M, Jl. Quantum Raya, Kabupaten Tangerang", distance = "±390 m", rating = "3.3", viewers = "1.3K", tags = listOf("Halal", "Rumahan", "Dekat Kampus", "Murah Meriah")),
-                NearbyDetails(price = "Rp25.000 - Rp50.000 per orang", hours = "Buka 09.00 - 17.00", location = "Ruko Newton Barat, Kabupaten Tangerang", distance = "±450 m", rating = "3.5", viewers = "2.4K", tags = listOf("Halal", "Prasmanan", "Porsi Mantap", "Murah Meriah")),
-                NearbyDetails(price = "Rp75.000 - Rp100.000 per orang", hours = "Buka 10.00 - 21.00", location = "Bez Walk South Wing, Kabupaten Tangerang", distance = "±742 km", rating = "4.2", viewers = "5.6K", tags = listOf("Halal", "Burger", "Daging Juicy", "Aesthetic")),
-                NearbyDetails(price = "Rp20.000 - Rp50.000 per orang", hours = "Buka 10.00 - 19.30", location = "Medang, Pagedangan, Kabupaten Tangerang", distance = "±1.1 km", rating = "4.0", viewers = "10.2K", tags = listOf("Halal", "Pedas", "Ayam Penyet", "Murah", "Ramai"))
-            )
-
-            nearbyList.forEachIndexed { index, item ->
-                val details = nearbyDetailsList[index]
+            if (filteredIndices.isEmpty()) {
                 item {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        NearbyRestaurantCardItem(
-                            imageRes = item.first,
-                            title = item.second,
-                            category = item.third,
-                            price = details.price,
-                            hours = details.hours,
-                            location = details.location,
-                            distance = details.distance,
-                            rating = details.rating,
-                            viewers = details.viewers,
-                            tags = details.tags
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Tidak ada restoran yang cocok dengan filtermu.",
+                            color = YumiTextDark,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center
                         )
+                    }
+                }
+            } else {
+                filteredIndices.forEach { index ->
+                    val item = rawNearbyList[index]
+                    val details = rawNearbyDetailsList[index]
+                    item {
+                        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            NearbyRestaurantCardItem(
+                                imageRes = item.first,
+                                title = item.second,
+                                category = item.third,
+                                price = details.price,
+                                hours = details.hours,
+                                location = details.location,
+                                distance = details.distance,
+                                rating = details.rating.toString(),
+                                viewers = details.viewers,
+                                tags = details.tags,
+                                isBookmarked = bookmarkedItems.contains(item.second),
+                                onCardClick = { onRestoClick(item.second) },
+                                onShareClick = { onShareClick(item.second) },
+                                onBookmarkClick = { onBookmarkClick(item.second) }
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
+    // Custom Pop-up Dialog Opsi Filter Harga
+    if (showPriceDialog) {
+        val priceOptions = listOf("<50rb", "50rb-100rb", "100rb-250rb", ">250rb")
+
+        AlertDialog(
+            onDismissRequest = { showPriceDialog = false },
+            title = {
+                Text(
+                    text = "Pilih Filter Harga",
+                    fontWeight = FontWeight.Bold,
+                    color = YumiBlackSubTitle,
+                    fontSize = 18.sp
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Pilih estimasi budget makan per orang:",
+                        fontSize = 12.sp,
+                        color = YumiTextDark
+                    )
+
+                    priceOptions.forEach { option ->
+                        val isSelectedOption = (tempSelectedPriceRange == option)
+                        val chipBg = if (isSelectedOption) YumiRed else YumiCardCream
+                        val textColor = if (isSelectedOption) YumiCream else YumiTextDark
+
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = chipBg,
+                            border = BorderStroke(1.dp, if (isSelectedOption) YumiRed else Color(0xffede6d5)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    tempSelectedPriceRange = if (isSelectedOption) null else option
+                                }
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Text(
+                                    text = option,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelectedOption) FontWeight.Bold else FontWeight.Medium,
+                                    color = textColor
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = YumiRed),
+                    onClick = {
+                        selectedPriceRange = tempSelectedPriceRange
+                        showPriceDialog = false
+                    }
+                ) {
+                    Text("Terapkan", color = YumiCream, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        tempSelectedPriceRange = null
+                        selectedPriceRange = null
+                        showPriceDialog = false
+                    }
+                ) {
+                    Text("Reset", color = YumiRed)
+                }
+            },
+            containerColor = YumiCream,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
 }
 
 data class NearbyDetails(
     val price: String,
+    val minPrice: Int,
+    val maxPrice: Int,
     val hours: String,
     val location: String,
     val distance: String,
-    val rating: String,
+    val rating: Float,
     val viewers: String,
     val tags: List<String>
 )
 
+// Komponen Card Restoran untuk Tab Nearby
 @Composable
 fun NearbyRestaurantCardItem(
     imageRes: Int,
@@ -399,13 +558,19 @@ fun NearbyRestaurantCardItem(
     distance: String,
     rating: String,
     viewers: String,
-    tags: List<String>
+    tags: List<String>,
+    isBookmarked: Boolean,
+    onCardClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onBookmarkClick: () -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(25.dp),
         colors = CardDefaults.cardColors(containerColor = YumiCardCream),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCardClick() }
     ) {
         Box(
             modifier = Modifier
@@ -570,6 +735,7 @@ fun NearbyRestaurantCardItem(
                 }
             }
 
+            // Tombol Bookmark interaktif
             Surface(
                 color = YumiCream.copy(alpha = 0.8f),
                 shape = CircleShape,
@@ -577,12 +743,13 @@ fun NearbyRestaurantCardItem(
                     .padding(10.dp)
                     .align(Alignment.TopEnd)
                     .size(32.dp)
+                    .clickable { onBookmarkClick() }
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_bookmark),
                         contentDescription = "Bookmark",
-                        colorFilter = ColorFilter.tint(YumiTextDark),
+                        colorFilter = ColorFilter.tint(if (isBookmarked) YumiRed else YumiTextDark),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -636,10 +803,13 @@ fun NearbyRestaurantCardItem(
                     }
                 }
 
+                // Tombol Share interaktif
                 Surface(
                     color = YumiCream.copy(alpha = 0.85f),
                     shape = CircleShape,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable { onShareClick() }
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Image(
@@ -651,25 +821,6 @@ fun NearbyRestaurantCardItem(
                     }
                 }
             }
-        }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 412, heightDp = 800)
-@Composable
-private fun HomeNearbyPreview() {
-    YumiTheme {
-        var currentTab by remember { mutableStateOf("Nearby") }
-        if (currentTab == "Nearby") {
-            HomeNearby(
-                selectedTab = currentTab,
-                onTabSelected = { newTab -> currentTab = newTab }
-            )
-        } else {
-            HomeForYou(
-                selectedTab = currentTab,
-                onTabSelected = { newTab -> currentTab = newTab }
-            )
         }
     }
 }
