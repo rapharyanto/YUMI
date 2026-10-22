@@ -1,4 +1,3 @@
-
 package org.umn.yumi.ui.components
 
 import androidx.compose.foundation.Image
