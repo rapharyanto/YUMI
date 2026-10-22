@@ -148,7 +148,7 @@ fun LoginScreen(
             // ================= 3. INPUT FIELDS =================
             // Email Input
             Text(
-                text = "Email atau Nomor Handphone",
+                text = "Email",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextVariant

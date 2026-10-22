@@ -59,9 +59,10 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth") // <-- TAMBAHKAN BARIS INI!
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
 
     // Android Credential Manager (Untuk Google Sign-In resmi terbaru)
     implementation("androidx.credentials:credentials:1.2.2")

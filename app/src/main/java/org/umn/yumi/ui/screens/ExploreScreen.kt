@@ -46,10 +46,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.umn.yumi.R
+import androidx.compose.foundation.border
 import org.umn.yumi.ui.components.BottomNavigationBar
 import org.umn.yumi.ui.theme.YumiCream
 import org.umn.yumi.ui.theme.YumiRed
-
+import org.umn.yumi.ui.theme.YumiDarkRed
+import org.umn.yumi.ui.theme.YumiWhite
+import org.umn.yumi.ui.theme.YumiText
+import org.umn.yumi.ui.theme.YumiMutedText
+import org.umn.yumi.ui.theme.YumiBorder
 private val ExploreRed = YumiRed
 private val ExploreDarkRed = YumiDarkRed
 private val ExploreBackground = YumiCream
@@ -562,7 +567,7 @@ private fun ExploreFilterChip(
             .clickable(onClick = onClick)
             .then(
                 if (selected) Modifier
-                else border(
+                else Modifier.border(
                     1.dp,
                     ExploreBorder,
                     RoundedCornerShape(22.dp)
