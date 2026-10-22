@@ -1,6 +1,7 @@
 package org.umn.yumi
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -8,10 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,11 +31,10 @@ import org.umn.yumi.ui.screens.ForgotPasswordScreen
 import org.umn.yumi.ui.screens.HomeForYou
 import org.umn.yumi.ui.screens.HomeNearby
 import org.umn.yumi.ui.screens.LoginScreen
-import org.umn.yumi.ui.screens.MapLocation
+import org.umn.yumi.ui.screens.MapLocationScreen
 import org.umn.yumi.ui.screens.OpeningScreen
 import org.umn.yumi.ui.screens.ProfileScreen
 import org.umn.yumi.ui.theme.YumiTheme
-
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -201,17 +198,17 @@ fun AppNavigation() {
                     onBack = {
                         navController.popBackStack()
                     },
-                    onNavigate = { action ->
-                        if (action == "map") {
+                    onNavigate = { navAction -> // Ganti 'action' jadi 'navAction'
+                        if (navAction == "map") {
                             navController.navigate("map_location")
-                        } else if (action == "share") {
+                        } else if (navAction == "share") {
                             val sendIntent = Intent().apply {
-                                val action = Intent.ACTION_SEND
-                                val extraText = "Cek $restoName di YUMI!"
+                                action = Intent.ACTION_SEND // Sekarang dengan aman merujuk ke Intent.action
+                                putExtra(Intent.EXTRA_TEXT, "Cek $restoName di YUMI!")
                                 type = "text/plain"
                             }
                             context.startActivity(Intent.createChooser(sendIntent, "Bagikan via"))
-                        } else if (action == "bookmark") {
+                        } else if (navAction == "bookmark") {
                             Toast.makeText(context, "Berhasil disimpan ke bookmark!", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -219,17 +216,15 @@ fun AppNavigation() {
             }
 
             composable("map_location") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .statusBarsPadding()
-                ) {
-                    MapLocation(
-                        onBackClicked = {
-                            navController.popBackStack()
-                        }
-                    )
-                }
+                MapLocationScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onOpenGoogleMaps = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://maps.google.com"))
+                        context.startActivity(intent)
+                    }
+                )
             }
 
             composable("explore") {

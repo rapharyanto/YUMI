@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "608516289912-t07oo553gacb8tnhr9fesee2b3qvmpol.apps.googleusercontent.com",
+          "client_id": "608516289912-1d455mdtck5dbmq7iporga2qbd20co1n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "org.umn.yumi",
-            "certificate_hash": "341e1cb62b89cd2280a04c60a3b0b864d91b7c3d"
+            "certificate_hash": "b5300c828f3f12711cf8413db4b2ef214767417a"
           }
         },
         {
