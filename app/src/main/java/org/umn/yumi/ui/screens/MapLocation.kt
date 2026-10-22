@@ -34,9 +34,7 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import org.umn.yumi.R
 
-// ==========================================
-// PALET WARNA TEMA YUMI
-// ==========================================
+
 private val PrimaryColor = Color(0xFFAE3115)
 private val PrimaryContainer = Color(0xFFFF6B4A)
 private val SecondaryColor = Color(0xFF006C49)
@@ -101,7 +99,7 @@ fun MapLocationScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                // 1. Interactive Top Destination & Mode Switcher Bar
+
                 DestinationAndModeCard(
                     selectedMode = selectedMode,
                     etaDisplay = etaDisplay,
@@ -112,7 +110,6 @@ fun MapLocationScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 2. Map View Wrapper with Overlays
                 SimulatedMapView(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,21 +118,19 @@ fun MapLocationScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 3. Bottom Guidance Sheet
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Turn-by-Turn Maneuver Card
+
                     ManeuverCard(
                         navStepText = navStepText,
                         navStepDist = navStepDist,
                         isSoundOn = isSoundOn
                     )
 
-                    // Resto Quick Status & Timeline Guidance
                     RestoDetailsCard(
                         isNavigating = isNavigating,
                         onToggleNavigation = { isNavigating = !isNavigating },
@@ -144,7 +139,6 @@ fun MapLocationScreen(
                     )
                 }
 
-                // SPACER AGAR KONTEN TIDAK TERTUTUP BOTTOM NAVIGATION BAR DARI MAINACTIVITY
                 Spacer(modifier = Modifier.height(88.dp))
             }
 
@@ -157,10 +151,6 @@ fun MapLocationScreen(
         }
     }
 }
-
-// ==========================================
-// SUB-COMPONENTS
-// ==========================================
 
 @Composable
 private fun MapTopAppBar(
@@ -193,13 +183,6 @@ private fun MapTopAppBar(
                         tint = OnSurfaceText
                     )
                 }
-
-                Text(
-                    text = "NyamYuk",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = PrimaryColor
-                )
 
                 Surface(
                     shape = CircleShape,
@@ -482,7 +465,7 @@ private fun SimulatedMapView(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.background(SurfaceContainerLow)
     ) {
-        // --- GAMBAR PETA LOKAL DARI RES/DRAWABLE ---
+
         Image(
             painter = painterResource(id = R.drawable.map_location_image), // Pastikan nama file di res/drawable adalah map_location_image.png (huruf kecil semua)
             contentDescription = "Map Backdrop",
@@ -490,9 +473,6 @@ private fun SimulatedMapView(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // --- OVERLAY PIN LOKASI DI ATAS PETA ---
-
-        // Landmark Marker Tag (Middle)
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -514,7 +494,6 @@ private fun SimulatedMapView(modifier: Modifier = Modifier) {
             }
         }
 
-        // Start Location Pin (Bottom-Left)
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -551,7 +530,6 @@ private fun SimulatedMapView(modifier: Modifier = Modifier) {
             }
         }
 
-        // Destination Pin (Top-Right)
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -590,7 +568,6 @@ private fun SimulatedMapView(modifier: Modifier = Modifier) {
             }
         }
 
-        // Floating Compass & Recenter Widgets
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)

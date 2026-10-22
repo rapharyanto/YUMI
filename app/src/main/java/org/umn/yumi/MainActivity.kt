@@ -198,12 +198,12 @@ fun AppNavigation() {
                     onBack = {
                         navController.popBackStack()
                     },
-                    onNavigate = { navAction -> // Ganti 'action' jadi 'navAction'
+                    onNavigate = { navAction ->
                         if (navAction == "map") {
                             navController.navigate("map_location")
                         } else if (navAction == "share") {
                             val sendIntent = Intent().apply {
-                                action = Intent.ACTION_SEND // Sekarang dengan aman merujuk ke Intent.action
+                                action = Intent.ACTION_SEND
                                 putExtra(Intent.EXTRA_TEXT, "Cek $restoName di YUMI!")
                                 type = "text/plain"
                             }
@@ -264,7 +264,7 @@ fun AppNavigation() {
             }
         }
 
-        // Bottom Bar dipasang transparan melayang di posisi paling bawah
+      
         if (showBottomBar) {
             BottomNavigationBar(
                 selectedMenu = selectedMenu,

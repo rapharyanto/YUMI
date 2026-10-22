@@ -66,20 +66,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// ---------- Warna (palet Yumi) ----------
-private val PfMerah = Color(0xFFA51C1C)         // warna utama (tombol aktif, bookmark, Voice AI)
-private val PfOranyeMerah = Color(0xFFFF4500)   // aksen kuat (Lihat Semua, notif, info buka)
-private val PfOranye = Color(0xFFFF8C00)        // aksen oranye
-private val PfEmas = Color(0xFFFFD700)          // aksen emas
-private val PfRating = Color(0xFFF99C10)        // khusus bintang rating
-private val PfKrim = Color(0xFFFAEBDB)          // latar lembut (chip, tag, ikon)
-private val PfBayangan = Color(0xFFEDE6D3)      // garis tepi / bayangan lembut
-private val PfBg = Color(0xFFFFFBEA)            // latar halaman
+
+private val PfMerah = Color(0xFFA51C1C)
+private val PfOranyeMerah = Color(0xFFFF4500)
+private val PfOranye = Color(0xFFFF8C00)
+private val PfEmas = Color(0xFFFFD700)
+private val PfRating = Color(0xFFF99C10)
+private val PfKrim = Color(0xFFFAEBDB)
+private val PfBayangan = Color(0xFFEDE6D3)
+private val PfBg = Color(0xFFFFFBEA)
 private val PfInk = Color(0xFF222222)
 private val PfMuted = Color(0xFF777777)
 private val PfCard = Color.White
 
-// ---------- Data ----------
 enum class Kategori { KOPI_WFH, MAKAN_MALAM }
 
 data class Resto(
@@ -91,7 +90,7 @@ data class Resto(
     val info: String,
     val aksi: String,
     val aksiIcon: ImageVector,
-    val foto: String? = null    // nama file di res/drawable (tanpa .jpg). Kosong = otomatis dari nama resto
+    val foto: String? = null
 )
 
 data class Kunjungan(
@@ -102,8 +101,7 @@ data class Kunjungan(
     val sudahReview: Boolean
 )
 
-// Ganti dengan data aslimu / dari API nanti
-// Parameter terakhir "foto" = nama file di res/drawable (huruf kecil, tanpa .jpeg/.webp)
+
 private val daftarTersimpan = listOf(
     Resto("Bakso Solo Samrat", "Senopati, Jakarta Selatan", Kategori.MAKAN_MALAM, "Tersimpan 2 hari lalu",
         "4.8", "Buka sekarang • 2.1 km", "Buka Maps", Icons.Outlined.Explore,
@@ -144,22 +142,22 @@ private val daftarRiwayat = listOf(
 
 private val namaFilter = listOf("Semua", "Kopi & WFH", "Makan Malam Enak")
 
-// ---------- Layar utama ----------
+
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     fotoProfil: String? = "foto_profil"
 ) {
-    // Menyimpan pilihan tab & filter, bahkan setelah layar diputar
-    var tabAktif by rememberSaveable { mutableStateOf(0) }      // 0 = Tersimpan, 1 = Riwayat
-    var filterAktif by rememberSaveable { mutableStateOf(0) }   // 0 = Semua, 1 = Kopi, 2 = Makan Malam
+
+    var tabAktif by rememberSaveable { mutableStateOf(0) }
+    var filterAktif by rememberSaveable { mutableStateOf(0) }
 
     var tampilPencapaian by rememberSaveable { mutableStateOf(false) }
     var tampilNotif by rememberSaveable { mutableStateOf(false) }
     var tampilSetelan by rememberSaveable { mutableStateOf(false) }
     var adaNotifBaru by rememberSaveable { mutableStateOf(true) }
 
-    // Tombol Share: membuka menu bagikan bawaan Android (WhatsApp, Instagram, dll)
+
     val context = LocalContext.current
     val bagikanProfil = {
         val intent = Intent(Intent.ACTION_SEND).apply {
@@ -191,7 +189,7 @@ fun ProfileScreen(
                 }
             }
         ) { padding ->
-            // LazyColumn = daftar yang BISA DI-SCROLL ke bawah. Semua isi halaman ada di sini.
+
             LazyColumn(
                 modifier = Modifier.padding(padding).fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -209,7 +207,7 @@ fun ProfileScreen(
                 }
 
                 if (tabAktif == 0) {
-                    // ---- Isi tab Tersimpan ----
+
                     item {
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(namaFilter.size) { i ->
@@ -223,23 +221,21 @@ fun ProfileScreen(
                     }
                     items(tersimpanTampil, key = { it.nama }) { RestoCard(it) }
                 } else {
-                    // ---- Isi tab Riwayat Kunjungan ----
+
                     items(daftarRiwayat, key = { it.nama + it.tanggal }) { RiwayatCard(it) }
                 }
 
-                item { Spacer(Modifier.height(16.dp)) }   // jarak bawah daftar
+                item { Spacer(Modifier.height(16.dp)) }
             }
         }
 
-        // Pop-up digambar di atas layar yang sama (tanpa jendela terpisah)
+
         if (tampilPencapaian) SheetPencapaian(onTutup = { tampilPencapaian = false })
         if (tampilNotif) SheetNotifikasi(onTutup = { tampilNotif = false })
         if (tampilSetelan) SheetSetelan(onTutup = { tampilSetelan = false })
     }
 }
 
-// ---------- Foto dari res/drawable (gradasi jika file belum ada) ----------
-// Nama file otomatis dari nama resto: "Bakso Solo Samrat" -> foto_bakso_solo_samrat
 fun namaFoto(nama: String): String =
     "foto_" + nama.lowercase().replace(Regex("[^a-z0-9]+"), "_").trim('_')
 
@@ -266,7 +262,7 @@ fun FotoAtauGradasi(
     }
 }
 
-// ---------- Top bar (tetap di atas saat scroll) ----------
+
 @Composable
 fun TopBar(fotoProfil: String?, adaNotifBaru: Boolean, onNotif: () -> Unit) {
     Row(
@@ -299,7 +295,7 @@ fun HeaderRow(onShare: () -> Unit, onSetelan: () -> Unit) {
     }
 }
 
-// ---------- Foto bulat, bio, statistik ----------
+
 @Composable
 fun ProfilInfo(fotoProfil: String?) {
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -330,7 +326,7 @@ fun Statistik(angka: String, label: String, warna: Color) {
     }
 }
 
-// ---------- Pencapaian ----------
+
 @Composable
 fun AchievementCard(onLihatSemua: () -> Unit) {
     KartuPutih {
@@ -367,7 +363,7 @@ fun Lencana(icon: ImageVector, bg: Color, tint: Color, judul: String, sub: Strin
     }
 }
 
-// ---------- Tab: Tersimpan / Riwayat Kunjungan ----------
+
 @Composable
 fun TabUtama(jumlahTersimpan: Int, tabAktif: Int, onPilih: (Int) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -408,7 +404,7 @@ fun ChipFilter(teks: String, aktif: Boolean, onClick: () -> Unit) {
     }
 }
 
-// ---------- Kartu restoran (tab Tersimpan) ----------
+
 @Composable
 fun RestoCard(r: Resto) {
     KartuPutih {
@@ -468,7 +464,7 @@ fun RestoCard(r: Resto) {
     }
 }
 
-// ---------- Kartu riwayat (tab Riwayat Kunjungan) ----------
+
 @Composable
 fun RiwayatCard(k: Kunjungan) {
     KartuPutih {
@@ -507,7 +503,7 @@ fun RiwayatCard(k: Kunjungan) {
     }
 }
 
-// ---------- Helper ----------
+
 @Composable
 private fun KartuPutih(konten: @Composable ColumnScope.() -> Unit) {
     Card(
@@ -519,9 +515,6 @@ private fun KartuPutih(konten: @Composable ColumnScope.() -> Unit) {
     )
 }
 
-// =====================================================================
-// Lembar bawah (bottom sheet): Pencapaian, Notifikasi, Pengaturan
-// =====================================================================
 data class Pencapaian(
     val judul: String, val sub: String, val icon: ImageVector,
     val bg: Color, val tint: Color, val terbuka: Boolean
@@ -539,7 +532,7 @@ private val daftarPencapaian = listOf(
     Pencapaian("Foto Juara", "Unggah 20 foto makanan (8/20)", Icons.Filled.Person, Color(0xFFEDEDED), Color(0xFF9E9E9E), false)
 )
 
-// Kerangka pop-up yang dipakai bersama (lapisan gelap + kartu di tengah)
+
 @Composable
 fun DialogKartu(judul: String, onTutup: () -> Unit, konten: @Composable ColumnScope.() -> Unit) {
     BackHandler(onBack = onTutup)   // tombol Back menutup pop-up

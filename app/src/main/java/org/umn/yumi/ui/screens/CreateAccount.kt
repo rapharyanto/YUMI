@@ -47,9 +47,9 @@ private val SurfaceContainerLowest = Color(0xFFFFFFFF)
 private val SurfaceContainerLow = Color(0xFFF7F1FF)
 private val SurfaceContainer = Color(0xFFF1EBFF)
 
-private val TextDark = Color(0xFF1C1A28)      // Warna Hitam Pekat untuk Teks Utama
-private val TextVariant = Color(0xFF59413C)   // Warna Gelap untuk Teks Sekunder
-private val OutlineVariant = Color(0xFF8C736C) // Warna Placeholder / Line
+private val TextDark = Color(0xFF1C1A28)
+private val TextVariant = Color(0xFF59413C)
+private val OutlineVariant = Color(0xFF8C736C)
 
 private val PrimaryOrange = Color(0xFFFF6B4A)
 private val PrimaryDeep = Color(0xFFAE3115)
@@ -378,7 +378,7 @@ fun CreateAccountScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // --- FOOTER REDIRECTION LINK ---
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -397,7 +397,7 @@ fun CreateAccountScreen(
     }
 }
 
-// --- HELPER COMPOSABLES ---
+
 @Composable
 private fun FormLabel(title: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
