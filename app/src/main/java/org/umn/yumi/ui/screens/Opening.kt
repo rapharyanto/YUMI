@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 import org.umn.yumi.R
 import org.umn.yumi.ui.theme.YumiTheme
 
-// --- PALET WARNA KHUSUS OPENING ---
 private val OpeningBg = Color(0xFFFDF8FF)
 private val PrimaryOrange = Color(0xFFFF6B4A)
 private val DarkRed = Color(0xFFAE3115)
@@ -60,7 +59,6 @@ fun OpeningScreen(
             .fillMaxSize()
             .background(OpeningBg)
     ) {
-        // --- AMBIENT GLOW BACKGROUND ---
         Box(
             modifier = Modifier
                 .size(256.dp)
@@ -86,12 +84,10 @@ fun OpeningScreen(
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ================= 1. ANIMATED YUMI LOGO HEADER =================
             AnimatedYumiHeader()
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ================= 2. BENTO FOOD COLLAGE =================
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,7 +127,7 @@ fun OpeningScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ================= 3. TYPOGRAPHY & VALUE PROPOSITION =================
+            // TYPOGRAPHY & VALUE PROPOSITION
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -171,7 +167,7 @@ fun OpeningScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ================= 4. FEATURE HIGHLIGHTS =================
+            // FEATURE HIGHLIGHTS
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -201,7 +197,7 @@ fun OpeningScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ================= 5. ACTION CTA BUTTONS =================
+            // ACTION CTA BUTTONS
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -254,7 +250,6 @@ fun OpeningScreen(
     }
 }
 
-// ================= HEADER LOGO DENGAN ANIMASI GESER DARI TENGAH =================
 @Composable
 private fun AnimatedYumiHeader() {
     val yumiOffsetX = remember { Animatable(110f) }
@@ -321,7 +316,6 @@ private fun AnimatedYumiHeader() {
     }
 }
 
-// ================= BENTO FOOD COLLAGE (LOCAL DRAWABLE) =================
 @Composable
 private fun BentoFoodCollage() {
     Row(
@@ -437,7 +431,6 @@ private fun BentoFoodCollage() {
     }
 }
 
-// ================= FEATURE CHIP CARD =================
 @Composable
 private fun FeatureChipCard(
     icon: ImageVector,

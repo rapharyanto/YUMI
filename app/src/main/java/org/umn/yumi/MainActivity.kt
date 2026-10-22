@@ -106,7 +106,6 @@ fun AppNavigation() {
         }
 
         composable("home") {
-            // Menggunakan rememberSaveable agar status tab (Nearby / For You) tidak reset saat back navigation
             var selectedTab by rememberSaveable { mutableStateOf("For You") }
             val listState = rememberLazyListState()
             val coroutineScope = rememberCoroutineScope()
@@ -158,7 +157,7 @@ fun AppNavigation() {
                     onRestoClick = onRestoClick,
                     onSeeAllClick = {
                         coroutineScope.launch {
-                            listState.animateScrollToItem(index = 4)
+                            listState.animateScrollToItem(index = 3)
                         }
                     },
                     listState = listState,
