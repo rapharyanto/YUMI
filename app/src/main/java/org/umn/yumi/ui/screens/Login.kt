@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.NorthEast
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.ArrowForward
@@ -39,7 +38,7 @@ import kotlinx.coroutines.launch
 import org.umn.yumi.ui.auth.GoogleAuthUiClient
 import org.umn.yumi.ui.theme.YumiTheme
 
-// --- PALET WARNA KHUSUS LOGIN SCREEN ---
+// --- PALET WARNA LOGIN SCREEN ---
 private val LoginBg = Color(0xFFFDF8FF)
 private val PrimaryOrange = Color(0xFFFF6B4A)
 private val DarkRed = Color(0xFFAE3115)
@@ -79,20 +78,24 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
                 .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
+            // ================= 1. AREA FORM UTAMA (AKAN MENAMBUNG SISA SPASI DI ATAS) =================
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
 
-            // ================= 1. HEADER TEXT =================
-            Column(modifier = Modifier.fillMaxWidth()) {
+                // Header Text
                 Text(
                     text = "Selamat Datang\nKembali! 👋",
-                    fontSize = 30.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = TextDark,
-                    lineHeight = 38.sp,
+                    lineHeight = 36.sp,
                     letterSpacing = (-0.5).sp
                 )
 
@@ -104,460 +107,429 @@ fun LoginScreen(
                     color = TextVariant,
                     lineHeight = 20.sp
                 )
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // ================= 2. ERROR FEEDBACK TOAST =================
-            if (showErrorNotice) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    color = ErrorContainer
-                ) {
-                    Row(
-                        modifier = Modifier.padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                // Error Notice Toast
+                if (showErrorNotice) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = ErrorContainer
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = "Error",
-                            tint = OnErrorContainer,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Akses Belum Berhasil",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = OnErrorContainer
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Error,
+                                contentDescription = "Error",
+                                tint = OnErrorContainer,
+                                modifier = Modifier.size(20.dp)
                             )
-                            Text(
-                                text = errorMessage,
-                                fontSize = 12.sp,
-                                color = OnErrorContainer.copy(alpha = 0.9f)
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Akses Belum Berhasil",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = OnErrorContainer
+                                )
+                                Text(
+                                    text = errorMessage,
+                                    fontSize = 11.sp,
+                                    color = OnErrorContainer.copy(alpha = 0.9f)
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // ================= 3. INPUT FIELDS =================
-            // Email Input
-            Text(
-                text = "Email",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextVariant
-            )
+                // Email Input
+                Text(
+                    text = "Email",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextVariant
+                )
 
-            Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                color = InputBg
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    color = InputBg
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Mail,
-                        contentDescription = null,
-                        tint = TextVariant,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .padding(horizontal = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Mail,
+                            contentDescription = null,
+                            tint = TextVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                    TextField(
-                        value = identifier,
-                        onValueChange = {
-                            identifier = it
-                            if (showErrorNotice) showErrorNotice = false
-                        },
-                        placeholder = {
-                            Text(
-                                text = "nama@email.com",
-                                fontSize = 13.sp,
-                                color = TextVariant.copy(alpha = 0.5f)
-                            )
-                        },
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = TextDark,
-                            unfocusedTextColor = TextDark
-                        ),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Next
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
+                        TextField(
+                            value = identifier,
+                            onValueChange = {
+                                identifier = it
+                                if (showErrorNotice) showErrorNotice = false
+                            },
+                            placeholder = {
+                                Text(
+                                    text = "nama@email.com",
+                                    fontSize = 13.sp,
+                                    color = TextVariant.copy(alpha = 0.5f)
+                                )
+                            },
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedTextColor = TextDark,
+                                unfocusedTextColor = TextDark
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email,
+                                imeAction = ImeAction.Next
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
 
-                    if (identifier.isNotEmpty()) {
+                        if (identifier.isNotEmpty()) {
+                            IconButton(
+                                onClick = { identifier = "" },
+                                modifier = Modifier.size(26.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Clear input",
+                                    tint = TextVariant,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Password Input
+                Text(
+                    text = "Kata Sandi",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextVariant
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    color = InputBg
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .padding(horizontal = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = TextVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        TextField(
+                            value = password,
+                            onValueChange = {
+                                password = it
+                                if (showErrorNotice) showErrorNotice = false
+                            },
+                            placeholder = {
+                                Text(
+                                    text = "Minimal 8 karakter",
+                                    fontSize = 13.sp,
+                                    color = TextVariant.copy(alpha = 0.5f)
+                                )
+                            },
+                            singleLine = true,
+                            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedTextColor = TextDark,
+                                unfocusedTextColor = TextDark
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password,
+                                imeAction = ImeAction.Done
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+
                         IconButton(
-                            onClick = { identifier = "" },
-                            modifier = Modifier.size(28.dp)
+                            onClick = { isPasswordVisible = !isPasswordVisible },
+                            modifier = Modifier.size(26.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Clear input",
+                                imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = "Toggle password visibility",
                                 tint = TextVariant,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            // Password Input
-            Text(
-                text = "Kata Sandi",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextVariant
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                color = InputBg
-            ) {
+                // Utilities Row
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = TextVariant,
-                        modifier = Modifier.size(20.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    TextField(
-                        value = password,
-                        onValueChange = {
-                            password = it
-                            if (showErrorNotice) showErrorNotice = false
-                        },
-                        placeholder = {
-                            Text(
-                                text = "Minimal 8 karakter",
-                                fontSize = 13.sp,
-                                color = TextVariant.copy(alpha = 0.5f)
-                            )
-                        },
-                        singleLine = true,
-                        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = TextDark,
-                            unfocusedTextColor = TextDark
-                        ),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    IconButton(
-                        onClick = { isPasswordVisible = !isPasswordVisible },
-                        modifier = Modifier.size(28.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = "Toggle password visibility",
-                            tint = TextVariant,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ================= 4. UTILITIES ROW =================
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { isRememberMeChecked = !isRememberMeChecked }
-                        .padding(vertical = 4.dp, horizontal = 2.dp)
-                ) {
-                    Checkbox(
-                        checked = isRememberMeChecked,
-                        onCheckedChange = { isRememberMeChecked = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = SecondaryGreen,
-                            uncheckedColor = TextVariant.copy(alpha = 0.5f)
-                        ),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Ingat Saya",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextDark
-                    )
-                }
-
-                Text(
-                    text = "Lupa Kata Sandi?",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = DarkRed,
-                    modifier = Modifier
-                        .clickable { onForgotPasswordClick() }
-                        .padding(vertical = 4.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // ================= 5. PRIMARY EMAIL/PASSWORD LOGIN BUTTON =================
-            Button(
-                onClick = {
-                    if (identifier.isBlank() || password.isBlank()) {
-                        errorMessage = "Mohon isi email dan kata sandi Anda."
-                        showErrorNotice = true
-                    } else {
-                        isLoading = true
-                        showErrorNotice = false
-                        // PERBAIKAN: Menggunakan FirebaseAuth.getInstance()
-                        FirebaseAuth.getInstance().signInWithEmailAndPassword(identifier.trim(), password)
-                            .addOnSuccessListener {
-                                isLoading = false
-                                onLoginSuccess()
-                            }
-                            .addOnFailureListener { exception ->
-                                isLoading = false
-                                errorMessage = exception.localizedMessage ?: "Gagal masuk. Periksa kembali akun Anda."
-                                showErrorNotice = true
-                            }
-                    }
-                },
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(999.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PrimaryOrange,
-                    disabledContainerColor = PrimaryOrange.copy(alpha = 0.6f)
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Memverifikasi...",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                } else {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { isRememberMeChecked = !isRememberMeChecked }
+                            .padding(vertical = 4.dp, horizontal = 2.dp)
                     ) {
+                        Checkbox(
+                            checked = isRememberMeChecked,
+                            onCheckedChange = { isRememberMeChecked = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = SecondaryGreen,
+                                uncheckedColor = TextVariant.copy(alpha = 0.5f)
+                            ),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Masuk Sekarang",
+                            text = "Ingat Saya",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextDark
+                        )
+                    }
+
+                    Text(
+                        text = "Lupa Kata Sandi?",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = DarkRed,
+                        modifier = Modifier
+                            .clickable { onForgotPasswordClick() }
+                            .padding(vertical = 4.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Login Button
+                Button(
+                    onClick = {
+                        if (identifier.isBlank() || password.isBlank()) {
+                            errorMessage = "Mohon isi email dan kata sandi Anda."
+                            showErrorNotice = true
+                        } else {
+                            isLoading = true
+                            showErrorNotice = false
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(identifier.trim(), password)
+                                .addOnSuccessListener {
+                                    isLoading = false
+                                    onLoginSuccess()
+                                }
+                                .addOnFailureListener { exception ->
+                                    isLoading = false
+                                    errorMessage = exception.localizedMessage ?: "Gagal masuk. Periksa kembali akun Anda."
+                                    showErrorNotice = true
+                                }
+                        }
+                    },
+                    enabled = !isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(999.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryOrange,
+                        disabledContainerColor = PrimaryOrange.copy(alpha = 0.6f)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Memverifikasi...",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowForward,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "Masuk Sekarang",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Icon(
+                                imageVector = Icons.Outlined.ArrowForward,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // ================= 6. DIVIDER =================
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HorizontalDivider(
-                    modifier = Modifier.weight(1f),
-                    color = DividerColor
-                )
-                Text(
-                    text = "atau masuk dengan",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextVariant,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-                HorizontalDivider(
-                    modifier = Modifier.weight(1f),
-                    color = DividerColor
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-// ================= 7. REAL GOOGLE SIGN-IN BUTTON =================
-            Surface(
-                onClick = {
-                    coroutineScope.launch {
-                        isLoading = true
-                        showErrorNotice = false
-
-                        val resId = context.resources.getIdentifier(
-                            "default_web_client_id",
-                            "string",
-                            context.packageName
-                        )
-                        val webClientId = if (resId != 0) context.getString(resId) else ""
-
-                        if (webClientId.isEmpty()) {
-                            isLoading = false
-                            errorMessage = "Web Client ID tidak ditemukan. Pastikan google-services.json sudah terpasang."
-                            showErrorNotice = true
-                            return@launch
-                        }
-
-                        val result = googleAuthUiClient.signInWithGoogle(webClientId)
-                        isLoading = false
-
-                        if (result.isSuccess) {
-                            onLoginSuccess()
-                        } else {
-                            errorMessage = result.exceptionOrNull()?.localizedMessage
-                                ?: "Gagal melakukan Google Sign-In."
-                            showErrorNotice = true
-                        }
-                    }
-                },
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(14.dp),
-                color = Color.White,
-                shadowElevation = 1.dp
-            ) {
+                // Divider
                 Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = GoogleIconVector,
-                        contentDescription = "Google Logo",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Masuk dengan Google",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextDark
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // ================= 8. REGISTER PROMPT & GUEST ACCESS =================
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Belum punya akun kulineran? ",
-                        fontSize = 13.sp,
-                        color = TextVariant
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        color = DividerColor
                     )
                     Text(
-                        text = "Daftar Sekarang",
-                        fontSize = 13.sp,
+                        text = "atau masuk dengan",
+                        fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
-                        color = DarkRed,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .clickable { onRegisterClick() }
-                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                        color = TextVariant,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        color = DividerColor
                     )
                 }
 
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Google Button
                 Surface(
-                    onClick = { onGuestClick() },
-                    shape = RoundedCornerShape(999.dp),
-                    color = InputBg
+                    onClick = {
+                        coroutineScope.launch {
+                            isLoading = true
+                            showErrorNotice = false
+
+                            val resId = context.resources.getIdentifier(
+                                "default_web_client_id",
+                                "string",
+                                context.packageName
+                            )
+                            val webClientId = if (resId != 0) context.getString(resId) else ""
+
+                            if (webClientId.isEmpty()) {
+                                isLoading = false
+                                errorMessage = "Web Client ID tidak ditemukan. Pastikan google-services.json sudah terpasang."
+                                showErrorNotice = true
+                                return@launch
+                            }
+
+                            val result = googleAuthUiClient.signInWithGoogle(webClientId)
+                            isLoading = false
+
+                            if (result.isSuccess) {
+                                onLoginSuccess()
+                            } else {
+                                errorMessage = result.exceptionOrNull()?.localizedMessage
+                                    ?: "Gagal melakukan Google Sign-In."
+                                showErrorNotice = true
+                            }
+                        }
+                    },
+                    enabled = !isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color.White,
+                    shadowElevation = 1.dp
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Jelajah Tanpa Akun",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextDark
-                        )
                         Icon(
-                            imageVector = Icons.Default.NorthEast,
-                            contentDescription = null,
-                            tint = TextDark,
-                            modifier = Modifier.size(14.dp)
+                            imageVector = GoogleIconVector,
+                            contentDescription = "Google Logo",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "Masuk dengan Google",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextDark
                         )
                     }
                 }
-            }
+            } // <--- SELESAI COLUMN WEIGHT(1f) DI SINI
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // ================= 2. FOOTER (DI BIKIN DI LUAR, OTOMATIS TERTANAM DI BAWAH) =================
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Belum punya akun kulineran? ",
+                    fontSize = 13.sp,
+                    color = TextVariant
+                )
+                Text(
+                    text = "Daftar Sekarang",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkRed,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable { onRegisterClick() }
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
         }
     }
 }
-
 
 // ================= INLINE GOOGLE VECTOR LOGO =================
 private val GoogleIconVector: ImageVector

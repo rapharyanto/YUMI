@@ -1,4 +1,3 @@
-
 package org.umn.yumi
 
 import android.os.Bundle
@@ -17,9 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import org.umn.yumi.ui.screens.CreateAccountScreen
+import org.umn.yumi.ui.screens.ForgotPasswordScreen
 import org.umn.yumi.ui.screens.LoginScreen
 import org.umn.yumi.ui.screens.OpeningScreen
 import org.umn.yumi.ui.theme.YumiTheme
@@ -60,22 +63,48 @@ fun AppNavigation() {
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate("home") {
-                        popUpTo("opening") { inclusive = true }
+                        popUpTo("login") { inclusive = true }
                     }
                 },
                 onRegisterClick = {
-                    // Nanti dihubungkan ke Register.kt
+                    navController.navigate("register")
                 },
                 onForgotPasswordClick = {
-                    // Nanti dihubungkan ke ForgotPassword.kt
+                    // HUBUNGKAN TOMBOL LUPA KATA SANDI
+                    navController.navigate("forgot_password")
                 },
                 onGuestClick = {
-                    navController.navigate("home")
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
             )
         }
 
-        // 3. Halaman Home (Placeholder sementara sampai Home.kt selesai dibuat)
+        // 3. Halaman Register (CreateAccount)
+        composable("register") {
+            CreateAccountScreen(
+                onRegisterSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                onLoginClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 4. Halaman Lupa Kata Sandi (ForgotPassword)
+        composable("forgot_password") {
+            ForgotPasswordScreen(
+                onBackToLoginClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 5. Halaman Home (Placeholder)
         composable("home") {
             Box(
                 modifier = Modifier
@@ -85,6 +114,31 @@ fun AppNavigation() {
             ) {
                 Text(
                     text = "🎉 Login Berhasil!\n\n(Tampilan Home.kt sedang dikembangkan)",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1C1A28),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        // 6. Halaman Detail Makanan (Argument Passing untuk Penilaian Rubrik Poin 4)
+        composable(
+            route = "detail/{foodId}",
+            arguments = listOf(
+                navArgument("foodId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val foodId = backStackEntry.arguments?.getString("foodId") ?: ""
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFFDF8FF)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Detail Makanan ID: $foodId\n(Tampilan DetailFoodScreen)",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1C1A28),

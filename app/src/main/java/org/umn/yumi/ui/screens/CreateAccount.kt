@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContactMail
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.NorthEast
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.VerifiedUser
@@ -38,32 +37,31 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.UserProfileChangeRequest
 import org.umn.yumi.ui.theme.YumiTheme
 
-// --- COLOR PALETTE (Sesuai Konfigurasi Tailwind HTML) ---
+// --- PALET WARNA DIKUNCI SELALU CERAH & TEKS HITAM ---
 private val BgSurface = Color(0xFFFDF8FF)
 private val SurfaceContainerLowest = Color(0xFFFFFFFF)
 private val SurfaceContainerLow = Color(0xFFF7F1FF)
 private val SurfaceContainer = Color(0xFFF1EBFF)
+
+private val TextDark = Color(0xFF1C1A28)      // Warna Hitam Pekat untuk Teks Utama
+private val TextVariant = Color(0xFF59413C)   // Warna Gelap untuk Teks Sekunder
+private val OutlineVariant = Color(0xFF8C736C) // Warna Placeholder / Line
+
 private val PrimaryOrange = Color(0xFFFF6B4A)
 private val PrimaryDeep = Color(0xFFAE3115)
 private val SecondaryGreen = Color(0xFF006C49)
-private val TextDark = Color(0xFF1C1A28)
-private val TextVariant = Color(0xFF59413C)
-private val OutlineVariant = Color(0xFFE1BFB8)
 
 @Composable
 fun CreateAccountScreen(
     onRegisterSuccess: () -> Unit,
-    onLoginClick: () -> Unit,
-    onGoogleClick: () -> Unit = {},
-    onGuestClick: () -> Unit = {}
+    onLoginClick: () -> Unit
 ) {
     var fullName by remember { mutableStateOf("") }
-    var identifier by remember { mutableStateOf("") } // Email atau No HP
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -107,31 +105,6 @@ fun CreateAccountScreen(
                         tint = TextDark,
                         modifier = Modifier.size(22.dp)
                     )
-                }
-
-                Surface(
-                    shape = CircleShape,
-                    color = SurfaceContainer
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Restaurant,
-                            contentDescription = null,
-                            tint = PrimaryDeep,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Text(
-                            text = "NYAMYUK V2.4",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextDark,
-                            letterSpacing = 1.sp
-                        )
-                    }
                 }
             }
 
@@ -212,12 +185,12 @@ fun CreateAccountScreen(
                     icon = Icons.Default.Person
                 )
 
-                // Field 2: Email or Phone
-                FormLabel(title = "Email atau Nomor Handphone")
+                // Field 2: Email
+                FormLabel(title = "Alamat Email")
                 InputField(
-                    value = identifier,
-                    onValueChange = { identifier = it },
-                    placeholder = "nama@email.com atau 0812xxxx",
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = "nama@email.com",
                     icon = Icons.Default.ContactMail,
                     keyboardType = KeyboardType.Email
                 )
@@ -338,7 +311,7 @@ fun CreateAccountScreen(
                 // Submit Button
                 Button(
                     onClick = {
-                        if (fullName.isBlank() || identifier.isBlank() || password.isBlank()) {
+                        if (fullName.isBlank() || email.isBlank() || password.isBlank()) {
                             errorMessage = "Mohon lengkapi seluruh data."
                             return@Button
                         }
@@ -359,32 +332,23 @@ fun CreateAccountScreen(
                         errorMessage = ""
 
                         val auth = FirebaseAuth.getInstance()
-                        val db = FirebaseFirestore.getInstance()
-
-                        // Pendaftaran via Firebase Auth (Identifier digunakan sebagai email)
-                        val emailInput = identifier.trim()
+                        val emailInput = email.trim()
 
                         auth.createUserWithEmailAndPassword(emailInput, password)
                             .addOnSuccessListener { authResult ->
-                                val uid = authResult.user?.uid ?: ""
+                                val user = authResult.user
+                                val profileUpdates = UserProfileChangeRequest.Builder()
+                                    .setDisplayName(fullName.trim())
+                                    .build()
 
-                                val userMap = hashMapOf(
-                                    "uid" to uid,
-                                    "fullName" to fullName.trim(),
-                                    "emailOrPhone" to emailInput,
-                                    "createdAt" to Timestamp.now()
-                                )
-
-                                db.collection("users").document(uid)
-                                    .set(userMap)
-                                    .addOnSuccessListener {
-                                        isLoading = false
+                                user?.updateProfile(profileUpdates)?.addOnCompleteListener { task ->
+                                    isLoading = false
+                                    if (task.isSuccessful) {
                                         onRegisterSuccess()
+                                    } else {
+                                        errorMessage = "Gagal memperbarui profil pengguna."
                                     }
-                                    .addOnFailureListener { e ->
-                                        isLoading = false
-                                        errorMessage = "Gagal menyimpan profil: ${e.localizedMessage}"
-                                    }
+                                }
                             }
                             .addOnFailureListener { e ->
                                 isLoading = false
@@ -394,7 +358,7 @@ fun CreateAccountScreen(
                     enabled = !isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange)
                 ) {
@@ -412,91 +376,22 @@ fun CreateAccountScreen(
                 }
             }
 
-            // --- DIVIDER SECTION ---
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // --- FOOTER REDIRECTION LINK ---
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = SurfaceContainer)
+                Text("Sudah punya akun kulineran? ", fontSize = 14.sp, color = TextVariant)
                 Text(
-                    text = "ATAU DAFTAR LEBIH CEPAT DENGAN",
-                    fontSize = 10.sp,
+                    text = "Masuk Sekarang",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextVariant,
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    letterSpacing = 0.5.sp
+                    color = PrimaryDeep,
+                    modifier = Modifier.clickable { onLoginClick() }
                 )
-                HorizontalDivider(modifier = Modifier.weight(1f), color = SurfaceContainer)
-            }
-
-            // --- SOCIAL SIGNUP BUTTONS ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Google Button
-                OutlinedButton(
-                    onClick = onGoogleClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = SurfaceContainerLowest),
-                    border = null
-                ) {
-                    Text("Google", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextDark)
-                }
-
-                // Apple Button
-                OutlinedButton(
-                    onClick = { /* Apple Sign-In */ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(containerColor = SurfaceContainerLowest),
-                    border = null
-                ) {
-                    Text("Apple", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextDark)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // --- FOOTER REDIRECTION LINKS ---
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Sudah punya akun kulineran? ", fontSize = 14.sp, color = TextVariant)
-                    Text(
-                        text = "Masuk Sekarang",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = PrimaryDeep,
-                        modifier = Modifier.clickable { onLoginClick() }
-                    )
-                }
-
-                // Guest Pill Button
-                Surface(
-                    onClick = onGuestClick,
-                    shape = CircleShape,
-                    color = SurfaceContainer
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text("Jelajah Tanpa Akun", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = TextDark)
-                        Icon(imageVector = Icons.Default.NorthEast, contentDescription = null, tint = TextDark, modifier = Modifier.size(14.dp))
-                    }
-                }
             }
         }
     }
@@ -527,7 +422,7 @@ private fun InputField(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(54.dp)
                 .padding(horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -536,13 +431,20 @@ private fun InputField(
             TextField(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text(text = placeholder, fontSize = 14.sp, color = OutlineVariant) },
+                placeholder = { Text(text = placeholder, fontSize = 13.sp, color = OutlineVariant) },
                 singleLine = true,
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 14.sp,
+                    color = TextDark
+                ),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = TextDark,
+                    unfocusedTextColor = TextDark
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Next),
                 modifier = Modifier.weight(1f)
@@ -568,7 +470,7 @@ private fun PasswordField(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(54.dp)
                 .padding(horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -577,23 +479,33 @@ private fun PasswordField(
             TextField(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text(text = placeholder, fontSize = 14.sp, color = OutlineVariant) },
+                placeholder = { Text(text = placeholder, fontSize = 13.sp, color = OutlineVariant) },
                 singleLine = true,
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 14.sp,
+                    color = TextDark
+                ),
                 visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = TextDark,
+                    unfocusedTextColor = TextDark
                 ),
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = onToggleVisibility) {
+            IconButton(
+                onClick = onToggleVisibility,
+                modifier = Modifier.size(28.dp)
+            ) {
                 Icon(
                     imageVector = if (isVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                     contentDescription = null,
                     tint = TextVariant,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }
@@ -606,9 +518,7 @@ fun CreateAccountScreenPreview() {
     YumiTheme {
         CreateAccountScreen(
             onRegisterSuccess = {},
-            onLoginClick = {},
-            onGoogleClick = {},
-            onGuestClick = {}
+            onLoginClick = {}
         )
     }
 }
