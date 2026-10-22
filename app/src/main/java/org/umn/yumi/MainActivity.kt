@@ -235,7 +235,31 @@ fun AppNavigation() {
             composable("explore") {
                 ExploreScreen(
                     onNavigate = { route ->
-                        navController.navigate(route)
+                        when (route) {
+                            "home" -> navController.navigate("home")
+                            "explore" -> navController.navigate("explore")
+                            "map" -> navController.navigate("map_location")
+                            "profile" -> navController.navigate("profile")
+                            "voice" -> {
+                                Toast.makeText(
+                                    context,
+                                    "Voice AI diaktifkan!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            "location", "notifications" -> {
+                                Toast.makeText(
+                                    context,
+                                    "Fitur ini belum tersedia.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            else -> {
+                                if (route.startsWith("detail_resto/")) {
+                                    navController.navigate(route)
+                                }
+                            }
+                        }
                     }
                 )
             }

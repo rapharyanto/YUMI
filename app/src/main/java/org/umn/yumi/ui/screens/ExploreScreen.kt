@@ -340,7 +340,9 @@ fun ExploreScreen(
                             vertical = 7.dp
                         ),
                         onClick = {
-                            onNavigate(review.restoName)
+                            onNavigate(
+                                "detail_resto/${android.net.Uri.encode(review.restoName)}"
+                            )
                         }
                     )
                 }
