@@ -1,6 +1,8 @@
 # 🍜 YUMI: Your Unique Meal Inside
+<img src="https://cdn.simpleicons.org/youtube/FF0000" width="18" align="center" /> **YouTube Demo Video**: [https://youtu.be/lXM2trWTsB8?si=fZhVktqTw20VXWsE](https://youtu.be/lXM2trWTsB8?si=fZhVktqTw20VXWsE)  
+<img src="https://cdn.simpleicons.org/github/FFFFFF" width="18" align="center" /> **GitHub Repository**: [https://github.com/rapharyanto/YUMI.git](https://github.com/rapharyanto/YUMI.git)
 
-### a. BRIEF DESCRIPTION OF THE APP
+### A. BRIEF DESCRIPTION OF THE APP
 
 **YUMI** merupakan aplikasi mobile berbasis Android yang dirancang untuk membantu pengguna menemukan dan menentukan pilihan makanan sesuai lokasi, anggaran, serta preferensi mereka. Aplikasi ini hadir untuk mengatasi permasalahan informasi kuliner yang tersebar di berbagai platform, banyaknya pilihan makanan yang membingungkan, serta sulitnya membandingkan harga, lokasi, popularitas, dan ulasan restoran. Dengan mengintegrasikan informasi kuliner ke dalam satu platform, YUMI membantu pengguna mengambil keputusan secara lebih praktis dan efisien.
 
@@ -15,7 +17,7 @@ Aplikasi ini dikembangkan menggunakan **Android Studio**, **Kotlin**, dan **Jetp
 
 ---
 
-### b. GROUP MEMBERS
+### B. GROUP MEMBERS
 
 | No | Nama Lengkap | NIM |
 | :---: | :--- | :---: |
@@ -26,7 +28,7 @@ Aplikasi ini dikembangkan menggunakan **Android Studio**, **Kotlin**, dan **Jetp
 
 ---
 
-### c. DIVISION OF TASKS AND WORKING SYSTEM
+### C. DIVISION OF TASKS AND WORKING SYSTEM
 
 Pengembangan aplikasi YUMI dilakukan melalui kolaborasi antaranggota kelompok dengan pembagian tugas berdasarkan halaman dan fitur yang menjadi tanggung jawab masing-masing. Setiap anggota berperan dalam merancang, mengembangkan, dan menyempurnakan bagian aplikasi menggunakan Android Studio, Kotlin, dan Jetpack Compose. Koordinasi dilakukan melalui diskusi dan pertukaran informasi mengenai progres pengerjaan untuk memastikan setiap bagian dapat terintegrasi dengan baik, baik dari segi tampilan, fungsionalitas, maupun konsistensi desain aplikasi.
 
@@ -39,7 +41,7 @@ Melalui sistem kerja ini, setiap perubahan dapat dikelola secara terstruktur, ke
 
 ---
 
-### d. SPECIFIC TASK/CONTRIBUTION OF EACH INDIVIDUAL MEMBER
+### D. SPECIFIC TASK/CONTRIBUTION OF EACH INDIVIDUAL MEMBER
 
 #### 1. Rafi Athallah Ahmad Haryanto (`00000130426`)
 * **Authentication Module**: Membangun UI dan logika modul autentikasi (`Opening.kt`, `Login.kt`, `CreateAccount.kt`, `ForgotPassword.kt`) menggunakan Jetpack Compose dengan *forced light theme* dan *state hoisting*.
