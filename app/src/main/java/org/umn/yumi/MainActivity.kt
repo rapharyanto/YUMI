@@ -8,7 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +25,8 @@ import org.umn.yumi.ui.screens.CreateAccountScreen
 import org.umn.yumi.ui.screens.ForgotPasswordScreen
 import org.umn.yumi.ui.screens.LoginScreen
 import org.umn.yumi.ui.screens.OpeningScreen
+import org.umn.yumi.ui.screens.homepage.HomeForYou
+import org.umn.yumi.ui.screens.homepage.HomeNearby
 import org.umn.yumi.ui.theme.YumiTheme
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +64,7 @@ fun AppNavigation() {
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
+                    // Pindah ke Home & hapus halaman Login dari backstack
                     navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -70,7 +73,6 @@ fun AppNavigation() {
                     navController.navigate("register")
                 },
                 onForgotPasswordClick = {
-                    // HUBUNGKAN TOMBOL LUPA KATA SANDI
                     navController.navigate("forgot_password")
                 },
                 onGuestClick = {
@@ -104,25 +106,29 @@ fun AppNavigation() {
             )
         }
 
-        // 5. Halaman Home (Placeholder)
+        // 5. Halaman Utama (HomeForYou)
         composable("home") {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFFDF8FF)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "🎉 Login Berhasil!\n\n(Tampilan Home.kt sedang dikembangkan)",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1C1A28),
-                    textAlign = TextAlign.Center
+            // State untuk menyimpan tab yang sedang aktif ("For You" atau "Nearby")
+            var selectedTab by remember { mutableStateOf("For You") }
+
+            if (selectedTab == "Nearby") {
+                HomeNearby(
+                    selectedTab = selectedTab,
+                    onTabSelected = { newTab ->
+                        selectedTab = newTab
+                    }
+                )
+            } else {
+                HomeForYou(
+                    selectedTab = selectedTab,
+                    onTabSelected = { newTab ->
+                        selectedTab = newTab
+                    }
                 )
             }
         }
 
-        // 6. Halaman Detail Makanan (Argument Passing untuk Penilaian Rubrik Poin 4)
+        // 6. Halaman Detail Makanan (Pengiriman Argument)
         composable(
             route = "detail/{foodId}",
             arguments = listOf(
