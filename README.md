@@ -1,5 +1,5 @@
 # 🍜 YUMI: Your Unique Meal Inside
-<img src="https://cdn.simpleicons.org/youtube/FF0000" width="18" align="center" /> **YouTube Demo Video**: [https://youtu.be/lXM2trWTsB8?si=fZhVktqTw20VXWsE](https://youtu.be/lXM2trWTsB8?si=fZhVktqTw20VXWsE)  
+<img src="https://cdn.simpleicons.org/youtube/FF0000" width="18" align="center" /> **YouTube Demo Video**: [https://youtu.be/K7R1w5zxgZ0?si=PfOuLprViehOGfmr](https://youtu.be/K7R1w5zxgZ0?si=PfOuLprViehOGfmr)  
 <img src="https://cdn.simpleicons.org/github/FFFFFF" width="18" align="center" /> **GitHub Repository**: [https://github.com/rapharyanto/YUMI.git](https://github.com/rapharyanto/YUMI.git)
 
 ### A. BRIEF DESCRIPTION OF THE APP
